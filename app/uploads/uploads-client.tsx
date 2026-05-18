@@ -37,7 +37,7 @@ export function UploadsPageClient({ members, initialUploads }: UploadsPageClient
     router.refresh();
   };
 
-  const categories = ['all', 'general', 'documents', 'images', 'presentations', 'resources'];
+  const categories = ['all', 'general', 'documents', 'images', 'videos', 'presentations', 'resources'];
 
   return (
     <main className="container mx-auto px-4 py-8">

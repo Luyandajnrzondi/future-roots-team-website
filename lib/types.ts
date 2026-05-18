@@ -39,3 +39,61 @@ export interface Position {
   description: string | null;
   created_at: string;
 }
+
+export interface TimetableEntry {
+  id: string;
+  member_id: string;
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+  activity: string;
+  location: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Meeting {
+  id: string;
+  title: string;
+  description: string | null;
+  meeting_date: string;
+  start_time: string;
+  end_time: string | null;
+  location: string | null;
+  meeting_type: string;
+  created_by: string | null;
+  is_recurring: boolean;
+  recurrence_pattern: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MeetingAttendee {
+  id: string;
+  meeting_id: string;
+  member_id: string;
+  status: 'pending' | 'confirmed' | 'declined';
+  created_at: string;
+}
+
+export interface Contribution {
+  id: string;
+  member_id: string | null;
+  amount: number;
+  contribution_date: string;
+  description: string | null;
+  created_at: string;
+}
+
+export interface Expense {
+  id: string;
+  title: string;
+  amount: number;
+  expense_date: string;
+  category: string;
+  description: string | null;
+  receipt_url: string | null;
+  paid_by: string | null;
+  created_at: string;
+}
