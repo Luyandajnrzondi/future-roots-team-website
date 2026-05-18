@@ -34,9 +34,15 @@ export function TeamMemberCard({ member }: TeamMemberCardProps) {
             <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20">
               {member.position}
             </Badge>
+            {member.department && (
+              <p className="text-xs text-muted-foreground">{member.department}</p>
+            )}
           </div>
           {member.bio && (
             <p className="text-sm text-muted-foreground line-clamp-2">{member.bio}</p>
+          )}
+          {member.contact && (
+            <p className="text-xs text-muted-foreground">{member.contact}</p>
           )}
         </div>
       </CardContent>

@@ -32,10 +32,20 @@ export function TeamMemberEditor({ positions }: TeamMemberEditorProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [name, setName] = useState('');
   const [position, setPosition] = useState('Team Member');
+  const [department, setDepartment] = useState('');
+  const [contact, setContact] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const router = useRouter();
   const supabase = createClient();
+
+  const departments = [
+    'Cellphone repair',
+    'Solar system installation',
+    'Digital migration',
+    'Hardware assembly',
+    'Business clinic',
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +57,8 @@ export function TeamMemberEditor({ positions }: TeamMemberEditorProps) {
       const { error } = await supabase.from('team_members').insert({
         name: name.trim(),
         position,
+        department: department || null,
+        contact: contact.trim() || null,
         email: email.trim() || null,
         phone: phone.trim() || null,
       });
@@ -55,6 +67,8 @@ export function TeamMemberEditor({ positions }: TeamMemberEditorProps) {
 
       setName('');
       setPosition('Team Member');
+      setDepartment('');
+      setContact('');
       setEmail('');
       setPhone('');
       setOpen(false);
@@ -104,6 +118,32 @@ export function TeamMemberEditor({ positions }: TeamMemberEditorProps) {
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="department">Department</Label>
+            <Select value={department} onValueChange={setDepartment}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select department" />
+              </SelectTrigger>
+              <SelectContent>
+                {departments.map((dept) => (
+                  <SelectItem key={dept} value={dept}>
+                    {dept}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="contact">Contact Number</Label>
+            <Input
+              id="contact"
+              value={contact}
+              onChange={(e) => setContact(e.target.value)}
+              placeholder="0XX XXX XXXX"
+            />
           </div>
 
           <div className="space-y-2">
