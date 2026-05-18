@@ -10,8 +10,11 @@ interface TeamMemberCardProps {
 }
 
 export function TeamMemberCard({ member }: TeamMemberCardProps) {
-  const initials = member.name
+  // Remove parentheses and their content, then get initials from remaining words
+  const cleanName = member.name.replace(/\([^)]*\)/g, '').trim();
+  const initials = cleanName
     .split(' ')
+    .filter((n) => n.length > 0)
     .map((n) => n[0])
     .join('')
     .toUpperCase()
