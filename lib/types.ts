@@ -6,6 +6,8 @@ export interface TeamMember {
   bio: string | null;
   email: string | null;
   phone: string | null;
+  department: string | null;
+  contact: string | null;
   created_at: string;
   updated_at: string;
 }

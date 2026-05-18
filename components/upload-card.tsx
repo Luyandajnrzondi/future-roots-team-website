@@ -57,10 +57,19 @@ function isVideoLink(url: string): boolean {
 }
 
 function getEmbedUrl(url: string): string | null {
-  // YouTube
-  const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\s?]+)/);
+  // YouTube - handle watch, short links, and embed URLs
+  const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\s?/]+)/);
   if (youtubeMatch) {
     return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+  }
+  
+  // If it's already a valid YouTube embed URL, return it directly
+  if (url.includes('youtube.com/embed/') || url.includes('youtube-nocookie.com/embed/')) {
+    // Extract the video ID and rebuild clean embed URL
+    const embedMatch = url.match(/youtube(?:-nocookie)?\.com\/embed\/([^?&\s]+)/);
+    if (embedMatch) {
+      return `https://www.youtube.com/embed/${embedMatch[1]}`;
+    }
   }
   
   // Vimeo
