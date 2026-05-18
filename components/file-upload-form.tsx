@@ -20,7 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Upload, Link2, Loader2, Plus } from 'lucide-react';
+import { Upload, Link2, Loader2, Plus, Video, Image as ImageIcon } from 'lucide-react';
 import { TeamMember } from '@/lib/types';
 
 interface FileUploadFormProps {
@@ -28,10 +28,12 @@ interface FileUploadFormProps {
   onUploadComplete: () => void;
 }
 
+type UploadType = 'file' | 'link' | 'video' | 'image';
+
 export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadFormProps) {
   const [open, setOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadType, setUploadType] = useState<'file' | 'link'>('file');
+  const [uploadType, setUploadType] = useState<UploadType>('file');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
@@ -51,6 +53,16 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
     }
   }, [title]);
 
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setLinkUrl('');
+    setFile(null);
+    setCategory('general');
+    setUploadedBy('');
+    setUploadType('file');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
@@ -59,6 +71,8 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
       let fileUrl = null;
       let fileType = null;
       let fileSize = null;
+      let finalLinkUrl = null;
+      let finalCategory = category;
 
       if (uploadType === 'file' && file) {
         const fileExt = file.name.split('.').pop();
@@ -77,6 +91,25 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
         fileUrl = publicUrl.publicUrl;
         fileType = file.type;
         fileSize = file.size;
+
+        // Auto-detect category based on file type
+        if (file.type.startsWith('image/')) {
+          finalCategory = 'images';
+        } else if (file.type.startsWith('video/')) {
+          finalCategory = 'videos';
+        } else if (file.type === 'application/pdf' || file.type.includes('document')) {
+          finalCategory = 'documents';
+        }
+      } else if (uploadType === 'link') {
+        finalLinkUrl = linkUrl;
+      } else if (uploadType === 'video') {
+        finalLinkUrl = linkUrl;
+        finalCategory = 'videos';
+        fileType = 'video/embedded';
+      } else if (uploadType === 'image') {
+        finalLinkUrl = linkUrl;
+        finalCategory = 'images';
+        fileType = 'image/url';
       }
 
       const { error: insertError } = await supabase.from('uploads').insert({
@@ -85,26 +118,42 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
         file_url: fileUrl,
         file_type: fileType,
         file_size: fileSize,
-        link_url: uploadType === 'link' ? linkUrl : null,
+        link_url: finalLinkUrl,
         uploaded_by: uploadedBy || null,
-        category,
+        category: finalCategory,
       });
 
       if (insertError) throw insertError;
 
-      // Reset form
-      setTitle('');
-      setDescription('');
-      setLinkUrl('');
-      setFile(null);
-      setCategory('general');
-      setUploadedBy('');
+      resetForm();
       setOpen(false);
       onUploadComplete();
     } catch (error) {
       console.error('Upload error:', error);
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const getPlaceholder = () => {
+    switch (uploadType) {
+      case 'video':
+        return 'https://youtube.com/watch?v=... or https://vimeo.com/...';
+      case 'image':
+        return 'https://example.com/image.jpg';
+      default:
+        return 'https://example.com';
+    }
+  };
+
+  const getHelperText = () => {
+    switch (uploadType) {
+      case 'video':
+        return 'Supports YouTube, Vimeo, and other video platforms. Use embed URL or regular video URL.';
+      case 'image':
+        return 'Direct link to an image file (JPG, PNG, GIF, WebP)';
+      default:
+        return 'Any URL to an external resource';
     }
   };
 
@@ -121,24 +170,46 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
           <DialogTitle>Upload File or Add Link</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex gap-2">
+          <div className="grid grid-cols-4 gap-2">
             <Button
               type="button"
               variant={uploadType === 'file' ? 'default' : 'outline'}
               onClick={() => setUploadType('file')}
-              className="flex-1 gap-2"
+              className="gap-1 text-xs px-2"
+              size="sm"
             >
-              <Upload className="h-4 w-4" />
+              <Upload className="h-3 w-3" />
               File
             </Button>
             <Button
               type="button"
               variant={uploadType === 'link' ? 'default' : 'outline'}
               onClick={() => setUploadType('link')}
-              className="flex-1 gap-2"
+              className="gap-1 text-xs px-2"
+              size="sm"
             >
-              <Link2 className="h-4 w-4" />
+              <Link2 className="h-3 w-3" />
               Link
+            </Button>
+            <Button
+              type="button"
+              variant={uploadType === 'video' ? 'default' : 'outline'}
+              onClick={() => setUploadType('video')}
+              className="gap-1 text-xs px-2"
+              size="sm"
+            >
+              <Video className="h-3 w-3" />
+              Video
+            </Button>
+            <Button
+              type="button"
+              variant={uploadType === 'image' ? 'default' : 'outline'}
+              onClick={() => setUploadType('image')}
+              className="gap-1 text-xs px-2"
+              size="sm"
+            >
+              <ImageIcon className="h-3 w-3" />
+              Image
             </Button>
           </div>
 
@@ -171,7 +242,7 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
                 id="file"
                 type="file"
                 onChange={handleFileChange}
-                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.mp3"
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.webp,.mp4,.webm,.mp3,.wav"
                 required
               />
               <p className="text-xs text-muted-foreground">
@@ -180,15 +251,20 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
             </div>
           ) : (
             <div className="space-y-2">
-              <Label htmlFor="linkUrl">URL</Label>
+              <Label htmlFor="linkUrl">
+                {uploadType === 'video' ? 'Video URL' : uploadType === 'image' ? 'Image URL' : 'URL'}
+              </Label>
               <Input
                 id="linkUrl"
                 type="url"
                 value={linkUrl}
                 onChange={(e) => setLinkUrl(e.target.value)}
-                placeholder="https://example.com"
+                placeholder={getPlaceholder()}
                 required
               />
+              <p className="text-xs text-muted-foreground">
+                {getHelperText()}
+              </p>
             </div>
           )}
 
@@ -202,6 +278,7 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
                 <SelectItem value="general">General</SelectItem>
                 <SelectItem value="documents">Documents</SelectItem>
                 <SelectItem value="images">Images</SelectItem>
+                <SelectItem value="videos">Videos</SelectItem>
                 <SelectItem value="presentations">Presentations</SelectItem>
                 <SelectItem value="resources">Resources</SelectItem>
               </SelectContent>
