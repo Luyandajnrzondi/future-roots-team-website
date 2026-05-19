@@ -34,6 +34,7 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
   }, [mobileMenuOpen]);
 
   const navLinks = [
+    { name: 'Services', href: '#services' },
     { name: 'About', href: '#about' },
     { name: 'Team', href: '#team' },
     { name: 'Updates', href: '/announcements' },
