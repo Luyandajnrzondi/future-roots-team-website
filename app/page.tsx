@@ -440,8 +440,8 @@ export default async function HomePage() {
                   <li className="flex items-start gap-3">
                     <MapPin className="h-5 w-5 text-background/50 shrink-0 mt-0.5" />
                     <span className="text-background/70">
-                      123 Future Street<br />
-                      Community Center<br />
+                      49 Sbonakaliso Mchunu St<br />
+                      Community Church<br />
                       South Africa
                     </span>
                   </li>
