@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { TeamMember, Announcement } from '@/lib/types';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, LayoutDashboard, Users, Smartphone, Sun, Tv, Mail, Phone, MapPin } from 'lucide-react';
+import { ArrowRight, LayoutDashboard, Users, Smartphone, Sun, Tv, Mail, Phone, MapPin, Monitor, Briefcase } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { LandingNavbar } from '@/components/landing-navbar';
 
@@ -78,11 +78,6 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
-
-          {/* Scroll indicator */}
-          <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
-            <div className="w-px h-16 bg-gradient-to-b from-transparent via-foreground/20 to-foreground/40" />
-          </div>
         </section>
 
         {/* Services Section */}
@@ -100,7 +95,7 @@ export default async function HomePage() {
               </p>
             </div>
             
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 { 
                   icon: Smartphone, 
@@ -119,6 +114,18 @@ export default async function HomePage() {
                   title: 'Digital Migration', 
                   description: 'Seamless transition to digital broadcasting. We help you upgrade your entertainment systems for the digital age.',
                   features: ['Decoder Setup', 'Antenna Installation', 'Signal Optimization', 'Technical Support']
+                },
+                { 
+                  icon: Monitor, 
+                  title: 'Hardware Installation', 
+                  description: 'Professional setup and installation of computer hardware and networking equipment for homes and offices.',
+                  features: ['Computer Setup', 'Network Installation', 'Peripheral Configuration', 'System Upgrades']
+                },
+                { 
+                  icon: Briefcase, 
+                  title: 'Business Clinic', 
+                  description: 'Strategic business consulting and support services to help entrepreneurs and small businesses grow and succeed.',
+                  features: ['Business Planning', 'Financial Guidance', 'Marketing Strategy', 'Growth Consultation']
                 },
               ].map((service, index) => (
                 <div 
@@ -365,8 +372,8 @@ export default async function HomePage() {
                 </div>
                 <p className="text-background/70 leading-relaxed max-w-md mb-8">
                   Building a sustainable future through technology and community empowerment. 
-                  We provide professional services in cellphone repair, solar installations, 
-                  and digital migration to help our community thrive in the modern age.
+                  We provide professional services including cellphone repair, solar installations, 
+                  digital migration, hardware installation, and business consulting to help our community thrive.
                 </p>
                 <div className="flex gap-4">
                   <a 
@@ -433,8 +440,8 @@ export default async function HomePage() {
                   <li className="flex items-start gap-3">
                     <MapPin className="h-5 w-5 text-background/50 shrink-0 mt-0.5" />
                     <span className="text-background/70">
-                      123 Future Street<br />
-                      Community Center<br />
+                      49 Sbonakaliso Mchunu St<br />
+                      Community Church<br />
                       South Africa
                     </span>
                   </li>
@@ -459,7 +466,7 @@ export default async function HomePage() {
         {/* Services Bar */}
         <div className="py-8 border-b border-background/10">
           <div className="container mx-auto px-6">
-            <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
               <div className="flex items-center gap-2 text-background/60">
                 <Smartphone className="h-4 w-4" />
                 <span className="text-sm">Cellphone Repair</span>
@@ -471,6 +478,14 @@ export default async function HomePage() {
               <div className="flex items-center gap-2 text-background/60">
                 <Tv className="h-4 w-4" />
                 <span className="text-sm">Digital Migration</span>
+              </div>
+              <div className="flex items-center gap-2 text-background/60">
+                <Monitor className="h-4 w-4" />
+                <span className="text-sm">Hardware Installation</span>
+              </div>
+              <div className="flex items-center gap-2 text-background/60">
+                <Briefcase className="h-4 w-4" />
+                <span className="text-sm">Business Clinic</span>
               </div>
             </div>
           </div>
