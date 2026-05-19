@@ -1,23 +1,10 @@
 import { createClient } from '@/lib/supabase/server';
 import { TeamMember, Announcement } from '@/lib/types';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import Image from 'next/image';
-import { 
-  Users, 
-  Target, 
-  Leaf, 
-  Heart, 
-  ArrowRight, 
-  Bell,
-  Calendar,
-  Megaphone,
-  AlertTriangle,
-  LayoutDashboard
-} from 'lucide-react';
+import { ArrowRight, LayoutDashboard, Users } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { LandingNavbar } from '@/components/landing-navbar';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,299 +29,255 @@ async function getLandingData() {
   };
 }
 
-const typeConfig = {
-  general: { icon: Megaphone, color: 'bg-blue-100 text-blue-800' },
-  meeting: { icon: Calendar, color: 'bg-primary/10 text-primary' },
-  urgent: { icon: AlertTriangle, color: 'bg-red-100 text-red-800' },
-  event: { icon: Bell, color: 'bg-amber-100 text-amber-800' },
-};
-
-const goals = [
-  {
-    icon: Leaf,
-    title: 'Sustainable Growth',
-    description: 'Building eco-friendly solutions that nurture communities and the environment for generations to come.',
-  },
-  {
-    icon: Users,
-    title: 'Community Empowerment',
-    description: 'Creating opportunities for local communities to thrive through education, resources, and collaboration.',
-  },
-  {
-    icon: Target,
-    title: 'Innovation & Impact',
-    description: 'Developing innovative approaches to address challenges while maximizing positive social impact.',
-  },
-  {
-    icon: Heart,
-    title: 'Inclusive Development',
-    description: 'Ensuring our initiatives are accessible and beneficial to all members of the community.',
-  },
-];
-
 export default async function HomePage() {
   const { members, announcements, logoUrl } = await getLandingData();
+  const displayedMembers = members.slice(0, 6);
+  const hasMoreMembers = members.length > 6;
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-white/80 backdrop-blur-md">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-3">
-            {logoUrl ? (
-              <Image
-                src={logoUrl}
-                alt="Future Roots Logo"
-                width={40}
-                height={40}
-                className="h-10 w-10 rounded-xl object-contain"
-              />
-            ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
-                <span className="text-lg font-bold text-primary-foreground">FR</span>
-              </div>
-            )}
-            <span className="text-xl font-semibold text-foreground hidden sm:block">Future Roots</span>
-          </Link>
-          
-          <nav className="flex items-center gap-4">
-            <Link 
-              href="#about" 
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block"
-            >
-              About
-            </Link>
-            <Link 
-              href="#goals" 
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block"
-            >
-              Our Goals
-            </Link>
-            <Link 
-              href="#team" 
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block"
-            >
-              Team
-            </Link>
-            <Link href="/dashboard">
-              <Button className="gap-2">
-                <LayoutDashboard className="h-4 w-4" />
-                <span className="hidden sm:inline">Team Dashboard</span>
-                <span className="sm:hidden">Dashboard</span>
-              </Button>
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <LandingNavbar logoUrl={logoUrl} />
 
       <main>
         {/* Hero Section */}
-        <section className="relative overflow-hidden py-20 md:py-32">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-          <div className="container mx-auto px-4 relative">
-            <div className="max-w-3xl mx-auto text-center">
-              <Badge variant="secondary" className="mb-6">
+        <section className="relative min-h-screen flex items-center justify-center pt-24 pb-20">
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-muted/30 rounded-full blur-3xl" />
+            <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/20 rounded-full blur-3xl" />
+          </div>
+          
+          <div className="container mx-auto px-6 relative z-10">
+            <div className="max-w-4xl mx-auto text-center">
+              <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-8">
                 A Team of {members.length} Dedicated Members
-              </Badge>
-              <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 text-balance">
-                Growing Together for a
-                <span className="text-primary"> Brighter Future</span>
-              </h1>
-              <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed text-pretty">
-                Future Roots is a passionate team dedicated to creating sustainable solutions 
-                and empowering communities. We believe in the power of collaboration, innovation, 
-                and shared purpose to build a better tomorrow.
               </p>
+              
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-light text-foreground mb-8 tracking-tight text-balance leading-[1.1]">
+                Growing Together for a
+                <span className="block italic font-serif">Brighter Future</span>
+              </h1>
+              
+              <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed text-pretty">
+                Future Roots is a passionate team dedicated to creating sustainable solutions 
+                and empowering communities through collaboration and innovation.
+              </p>
+              
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="#goals">
-                  <Button size="lg" className="gap-2 w-full sm:w-auto">
-                    Learn More
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
+                <Link href="#team">
+                  <button className="group inline-flex items-center gap-3 px-8 py-4 bg-foreground text-background rounded-full text-sm font-medium transition-all duration-300 hover:gap-4">
+                    Meet Our Team
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </button>
                 </Link>
-                <Link href="/announcements">
-                  <Button size="lg" variant="outline" className="gap-2 w-full sm:w-auto">
-                    <Bell className="h-4 w-4" />
-                    View Announcements
-                  </Button>
+                <Link href="/dashboard">
+                  <button className="inline-flex items-center gap-3 px-8 py-4 border border-foreground/20 text-foreground rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/5">
+                    <LayoutDashboard className="h-4 w-4" />
+                    Team Dashboard
+                  </button>
                 </Link>
               </div>
             </div>
           </div>
-        </section>
 
-        {/* Announcements Preview */}
-        {announcements.length > 0 && (
-          <section className="py-16 bg-secondary/30">
-            <div className="container mx-auto px-4">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-foreground">Latest Updates</h2>
-                  <p className="text-muted-foreground mt-1">Stay informed with our latest announcements</p>
-                </div>
-                <Link href="/announcements">
-                  <Button variant="outline" className="gap-2">
-                    View All
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
-              <div className="grid gap-4 md:grid-cols-3">
-                {announcements.map((announcement) => {
-                  const config = typeConfig[announcement.type];
-                  const Icon = config.icon;
-                  
-                  return (
-                    <Card key={announcement.id} className="bg-white/70 backdrop-blur-sm border-border/50 hover:shadow-md transition-shadow">
-                      <CardContent className="p-5">
-                        <div className="flex items-start gap-3">
-                          <div className={`p-2 rounded-lg ${config.color}`}>
-                            <Icon className="h-5 w-5" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <h3 className="font-semibold text-foreground truncate">{announcement.title}</h3>
-                            <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                              {announcement.content}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-2">
-                              {formatDistanceToNow(new Date(announcement.created_at), { addSuffix: true })}
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        )}
+          {/* Scroll indicator */}
+          <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
+            <div className="w-px h-16 bg-gradient-to-b from-transparent via-foreground/20 to-foreground/40" />
+          </div>
+        </section>
 
         {/* About Section */}
-        <section id="about" className="py-20">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto text-center">
-              <Badge variant="secondary" className="mb-4">About Us</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                Who We Are
-              </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Future Roots is a collaborative initiative bringing together {members.length} dedicated individuals 
-                who share a common vision for positive change. Our team combines diverse skills, backgrounds, 
-                and perspectives to tackle challenges and create meaningful impact in our communities.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed mt-4">
-                We believe that sustainable progress comes from working together, learning from each other, 
-                and staying committed to our shared values. Every member of our team plays a vital role in 
-                achieving our collective goals.
-              </p>
+        <section id="about" className="py-32 border-t border-border">
+          <div className="container mx-auto px-6">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              <div>
+                <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4">
+                  About Us
+                </p>
+                <h2 className="text-4xl md:text-5xl font-light text-foreground mb-8 tracking-tight">
+                  Who We Are
+                </h2>
+              </div>
+              <div className="space-y-6">
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  Future Roots is a collaborative initiative bringing together {members.length} dedicated individuals 
+                  who share a common vision for positive change. Our team combines diverse skills, backgrounds, 
+                  and perspectives to tackle challenges and create meaningful impact in our communities.
+                </p>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  We believe that sustainable progress comes from working together, learning from each other, 
+                  and staying committed to our shared values.
+                </p>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Goals Section */}
-        <section id="goals" className="py-20 bg-secondary/30">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <Badge variant="secondary" className="mb-4">Our Mission</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        {/* Values Section */}
+        <section className="py-32 bg-secondary/50">
+          <div className="container mx-auto px-6">
+            <div className="text-center mb-20">
+              <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4">
+                Our Mission
+              </p>
+              <h2 className="text-4xl md:text-5xl font-light text-foreground tracking-tight">
                 What We Stand For
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Our work is guided by these core principles that shape everything we do.
-              </p>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {goals.map((goal, index) => (
-                <Card key={index} className="bg-white/70 backdrop-blur-sm border-border/50 hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                      <goal.icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-foreground mb-2">{goal.title}</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      {goal.description}
-                    </p>
-                  </CardContent>
-                </Card>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {[
+                { title: 'Sustainable Growth', description: 'Building eco-friendly solutions that nurture communities and the environment.' },
+                { title: 'Community Power', description: 'Creating opportunities for local communities to thrive through education.' },
+                { title: 'Innovation', description: 'Developing innovative approaches to address challenges effectively.' },
+                { title: 'Inclusivity', description: 'Ensuring our initiatives are accessible and beneficial to all members.' },
+              ].map((value, index) => (
+                <div 
+                  key={index} 
+                  className="group p-8 bg-card/60 backdrop-blur-sm rounded-3xl border border-border/50 hover:bg-card transition-all duration-500"
+                >
+                  <span className="text-sm text-muted-foreground font-medium">0{index + 1}</span>
+                  <h3 className="text-xl font-medium text-foreground mt-4 mb-3">{value.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{value.description}</p>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
         {/* Team Section */}
-        <section id="team" className="py-20">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <Badge variant="secondary" className="mb-4">Our Team</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Meet the People Behind Future Roots
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Our diverse team of {members.length} members brings together unique talents and perspectives.
-              </p>
+        <section id="team" className="py-32 border-t border-border">
+          <div className="container mx-auto px-6">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
+              <div>
+                <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4">
+                  Our Team
+                </p>
+                <h2 className="text-4xl md:text-5xl font-light text-foreground tracking-tight">
+                  Meet the People Behind
+                  <span className="block italic font-serif">Future Roots</span>
+                </h2>
+              </div>
+              {hasMoreMembers && (
+                <Link href="/dashboard">
+                  <button className="group inline-flex items-center gap-3 px-6 py-3 bg-foreground text-background rounded-full text-sm font-medium transition-all duration-300 hover:gap-4">
+                    <Users className="h-4 w-4" />
+                    View All {members.length} Members
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </button>
+                </Link>
+              )}
             </div>
-            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {members.slice(0, 12).map((member) => (
-                <Card key={member.id} className="bg-white/70 backdrop-blur-sm border-border/50 hover:shadow-md transition-shadow">
-                  <CardContent className="p-4 text-center">
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+              {displayedMembers.map((member) => (
+                <div 
+                  key={member.id} 
+                  className="group text-center"
+                >
+                  <div className="relative mb-4 overflow-hidden rounded-2xl bg-muted/50 aspect-square">
                     {member.avatar_url ? (
                       <Image
                         src={member.avatar_url}
                         alt={member.name}
-                        width={48}
-                        height={48}
-                        className="w-12 h-12 rounded-full mx-auto mb-3 object-cover"
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                        <span className="text-lg font-semibold text-primary">
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-3xl font-light text-muted-foreground">
                           {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                         </span>
                       </div>
                     )}
-                    <p className="font-medium text-sm text-foreground truncate">{member.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{member.position}</p>
-                  </CardContent>
-                </Card>
+                  </div>
+                  <p className="font-medium text-foreground text-sm">{member.name}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{member.position}</p>
+                </div>
               ))}
             </div>
-            {members.length > 12 && (
-              <div className="text-center mt-8">
-                <Link href="/team">
-                  <Button variant="outline" className="gap-2">
+
+            {hasMoreMembers && (
+              <div className="text-center mt-12 md:hidden">
+                <Link href="/dashboard">
+                  <button className="group inline-flex items-center gap-3 px-6 py-3 bg-foreground text-background rounded-full text-sm font-medium transition-all duration-300">
+                    <Users className="h-4 w-4" />
                     View All {members.length} Members
                     <ArrowRight className="h-4 w-4" />
-                  </Button>
+                  </button>
                 </Link>
               </div>
             )}
           </div>
         </section>
 
+        {/* Announcements Section */}
+        {announcements.length > 0 && (
+          <section className="py-32 bg-secondary/50">
+            <div className="container mx-auto px-6">
+              <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
+                <div>
+                  <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4">
+                    Latest Updates
+                  </p>
+                  <h2 className="text-4xl md:text-5xl font-light text-foreground tracking-tight">
+                    Stay Informed
+                  </h2>
+                </div>
+                <Link href="/announcements">
+                  <button className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    View All Updates
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </Link>
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-6">
+                {announcements.map((announcement) => (
+                  <article 
+                    key={announcement.id} 
+                    className="group p-8 bg-card/60 backdrop-blur-sm rounded-3xl border border-border/50 hover:bg-card transition-all duration-500"
+                  >
+                    <time className="text-xs text-muted-foreground">
+                      {formatDistanceToNow(new Date(announcement.created_at), { addSuffix: true })}
+                    </time>
+                    <h3 className="text-lg font-medium text-foreground mt-3 mb-2">{announcement.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                      {announcement.content}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* CTA Section */}
-        <section className="py-20 bg-primary">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
+        <section className="py-32 border-t border-border">
+          <div className="container mx-auto px-6 text-center">
+            <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4">
               Part of the Team?
+            </p>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-foreground mb-8 tracking-tight">
+              Access Your Dashboard
             </h2>
-            <p className="text-lg text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
-              Access the team dashboard to view schedules, track attendance, manage files, and stay updated with the latest announcements.
+            <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
+              View schedules, track attendance, manage files, and stay updated with the latest announcements.
             </p>
             <Link href="/dashboard">
-              <Button size="lg" variant="secondary" className="gap-2">
+              <button className="group inline-flex items-center gap-3 px-10 py-5 bg-foreground text-background rounded-full text-base font-medium transition-all duration-300 hover:gap-4">
                 <LayoutDashboard className="h-5 w-5" />
                 Go to Dashboard
-              </Button>
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </button>
             </Link>
           </div>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border/40 py-8 bg-white/50">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+      <footer className="py-12 border-t border-border">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
               {logoUrl ? (
                 <Image
@@ -345,11 +288,11 @@ export default async function HomePage() {
                   className="h-8 w-8 rounded-lg object-contain"
                 />
               ) : (
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                  <span className="text-sm font-bold text-primary-foreground">FR</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground">
+                  <span className="text-xs font-medium text-background">FR</span>
                 </div>
               )}
-              <span className="font-semibold text-foreground">Future Roots</span>
+              <span className="font-medium text-foreground">Future Roots</span>
             </div>
             <p className="text-sm text-muted-foreground">
               Building a sustainable future, together.
