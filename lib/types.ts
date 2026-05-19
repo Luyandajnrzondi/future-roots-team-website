@@ -99,3 +99,22 @@ export interface Expense {
   paid_by: string | null;
   created_at: string;
 }
+
+export interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  type: 'general' | 'meeting' | 'urgent' | 'event';
+  is_pinned: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SiteSetting {
+  id: string;
+  key: string;
+  value: string | null;
+  created_at: string;
+  updated_at: string;
+}

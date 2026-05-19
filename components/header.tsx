@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { 
@@ -12,37 +13,83 @@ import {
   CalendarDays, 
   Wallet,
   Menu,
-  X
+  Bell,
+  Home,
+  Settings
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { LogoUpload } from '@/components/logo-upload';
+import { createClient } from '@/lib/supabase/client';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Team', href: '/team', icon: Users },
   { name: 'Attendance', href: '/attendance', icon: Calendar },
   { name: 'Timetable', href: '/timetable', icon: Clock },
   { name: 'Meetings', href: '/meetings', icon: CalendarDays },
   { name: 'Finances', href: '/finances', icon: Wallet },
   { name: 'Uploads', href: '/uploads', icon: Upload },
+  { name: 'Announcements', href: '/announcements', icon: Bell },
 ];
 
 export function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
+
+  useEffect(() => {
+    const fetchLogo = async () => {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', 'logo_url')
+        .single();
+      
+      if (data?.value) {
+        setLogoUrl(data.value);
+      }
+    };
+    
+    fetchLogo();
+  }, []);
+
+  const handleLogoChange = (url: string | null) => {
+    setLogoUrl(url);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-white/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
-            <span className="text-lg font-bold text-primary-foreground">FR</span>
-          </div>
+          {logoUrl ? (
+            <Image
+              src={logoUrl}
+              alt="Future Roots Logo"
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-xl object-contain"
+            />
+          ) : (
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
+              <span className="text-lg font-bold text-primary-foreground">FR</span>
+            </div>
+          )}
           <span className="text-xl font-semibold text-foreground hidden sm:block">Future Roots</span>
         </Link>
         
@@ -66,6 +113,29 @@ export function Header() {
               </Link>
             );
           })}
+          
+          {/* Settings Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="ml-2">
+                <Settings className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Settings</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/" className="flex items-center gap-2 cursor-pointer">
+                  <Home className="h-4 w-4" />
+                  Public Home Page
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <div className="p-2">
+                <LogoUpload currentLogoUrl={logoUrl} onLogoChange={handleLogoChange} />
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
         {/* Tablet Navigation (icons only) */}
@@ -88,6 +158,29 @@ export function Header() {
               </Link>
             );
           })}
+          
+          {/* Settings Dropdown for tablet */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Settings className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Settings</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/" className="flex items-center gap-2 cursor-pointer">
+                  <Home className="h-4 w-4" />
+                  Public Home Page
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <div className="p-2">
+                <LogoUpload currentLogoUrl={logoUrl} onLogoChange={handleLogoChange} />
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
         {/* Mobile Navigation */}
@@ -119,6 +212,20 @@ export function Header() {
                   </Link>
                 );
               })}
+              
+              <div className="border-t border-border mt-4 pt-4">
+                <Link
+                  href="/"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
+                >
+                  <Home className="h-5 w-5" />
+                  Public Home Page
+                </Link>
+                <div className="px-4 py-3">
+                  <LogoUpload currentLogoUrl={logoUrl} onLogoChange={handleLogoChange} />
+                </div>
+              </div>
             </nav>
           </SheetContent>
         </Sheet>
