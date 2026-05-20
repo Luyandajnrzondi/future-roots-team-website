@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { Menu, X, LayoutDashboard, Bell } from 'lucide-react';
+import { Menu, X, Bell, LogIn } from 'lucide-react';
 
 interface LandingNavbarProps {
   logoUrl: string | null;
@@ -104,16 +104,15 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
           {/* Right - Actions */}
           <div className="flex items-center gap-2 sm:gap-4">
             <Link 
-              href="/announcements"
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-300 hidden sm:flex"
-              aria-label="Announcements"
+              href="/auth/login"
+              className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-300 hidden sm:block"
             >
-              <Bell className="h-5 w-5" />
+              Sign in
             </Link>
-            <Link href="/dashboard">
+            <Link href="/auth/login">
               <button className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-gray-900 text-white rounded-full text-sm font-medium transition-all duration-300 hover:bg-gray-800">
-                <LayoutDashboard className="h-4 w-4" />
-                <span className="hidden sm:inline">Dashboard</span>
+                <LogIn className="h-4 w-4" />
+                <span className="hidden sm:inline">Get Started</span>
               </button>
             </Link>
           </div>
@@ -197,11 +196,11 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
           </nav>
 
           {/* CTA */}
-          <div className="p-6 pt-0">
-            <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+          <div className="p-6 pt-0 space-y-3">
+            <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
               <button className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-base font-medium transition-all duration-300 hover:bg-foreground/90">
-                <LayoutDashboard className="h-5 w-5" />
-                Team Dashboard
+                <LogIn className="h-5 w-5" />
+                Sign in
               </button>
             </Link>
           </div>

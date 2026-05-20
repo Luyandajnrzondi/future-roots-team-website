@@ -358,10 +358,10 @@ export default async function HomePage() {
             <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
               View schedules, track attendance, manage files, and stay updated with the latest announcements.
             </p>
-            <Link href="/dashboard">
+            <Link href="/auth/login">
               <button className="group inline-flex items-center gap-3 px-10 py-5 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-base font-medium transition-all duration-300 hover:bg-foreground/90 hover:gap-4">
                 <LayoutDashboard className="h-5 w-5" />
-                Go to Dashboard
+                Sign in to Dashboard
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </button>
             </Link>
