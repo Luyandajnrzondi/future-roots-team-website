@@ -64,13 +64,13 @@ export default async function HomePage() {
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="#team">
-                  <button className="group inline-flex items-center gap-3 px-8 py-4 bg-foreground text-background rounded-full text-sm font-medium transition-all duration-300 hover:gap-4">
+                  <button className="group inline-flex items-center gap-3 px-8 py-4 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/90 hover:gap-4">
                     Meet Our Team
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </button>
                 </Link>
                 <Link href="/dashboard">
-                  <button className="inline-flex items-center gap-3 px-8 py-4 border border-foreground/20 text-foreground rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/5">
+                  <button className="inline-flex items-center gap-3 px-8 py-4 border border-foreground/30 bg-background/50 backdrop-blur-sm text-foreground rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/10">
                     <LayoutDashboard className="h-4 w-4" />
                     Team Dashboard
                   </button>
@@ -231,7 +231,7 @@ export default async function HomePage() {
               </div>
               {hasMoreMembers && (
                 <Link href="/dashboard">
-                  <button className="group inline-flex items-center gap-3 px-6 py-3 bg-foreground text-background rounded-full text-sm font-medium transition-all duration-300 hover:gap-4">
+                  <button className="group inline-flex items-center gap-3 px-6 py-3 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/90 hover:gap-4">
                     <Users className="h-4 w-4" />
                     View All {members.length} Members
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -271,7 +271,7 @@ export default async function HomePage() {
             {hasMoreMembers && (
               <div className="text-center mt-12 md:hidden">
                 <Link href="/dashboard">
-                  <button className="group inline-flex items-center gap-3 px-6 py-3 bg-foreground text-background rounded-full text-sm font-medium transition-all duration-300">
+                  <button className="group inline-flex items-center gap-3 px-6 py-3 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/90">
                     <Users className="h-4 w-4" />
                     View All {members.length} Members
                     <ArrowRight className="h-4 w-4" />
@@ -336,7 +336,7 @@ export default async function HomePage() {
               View schedules, track attendance, manage files, and stay updated with the latest announcements.
             </p>
             <Link href="/dashboard">
-              <button className="group inline-flex items-center gap-3 px-10 py-5 bg-foreground text-background rounded-full text-base font-medium transition-all duration-300 hover:gap-4">
+              <button className="group inline-flex items-center gap-3 px-10 py-5 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-base font-medium transition-all duration-300 hover:bg-foreground/90 hover:gap-4">
                 <LayoutDashboard className="h-5 w-5" />
                 Go to Dashboard
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />

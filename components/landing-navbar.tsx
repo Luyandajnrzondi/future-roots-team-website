@@ -111,7 +111,7 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
               <Bell className="h-5 w-5" />
             </Link>
             <Link href="/dashboard">
-              <button className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-foreground text-background rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/90">
+              <button className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/90">
                 <LayoutDashboard className="h-4 w-4" />
                 <span className="hidden sm:inline">Dashboard</span>
               </button>
@@ -199,7 +199,7 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
           {/* CTA */}
           <div className="p-6 pt-0">
             <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-              <button className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-foreground text-background rounded-full text-base font-medium transition-all duration-300 hover:bg-foreground/90">
+              <button className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-base font-medium transition-all duration-300 hover:bg-foreground/90">
                 <LayoutDashboard className="h-5 w-5" />
                 Team Dashboard
               </button>
