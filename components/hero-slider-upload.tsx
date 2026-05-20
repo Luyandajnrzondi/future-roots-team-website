@@ -76,10 +76,13 @@ export function HeroSliderUpload({ onSlidesChange }: HeroSliderUploadProps) {
       const supabase = createClient();
       
       const fileExt = file.name.split('.').pop();
-      const fileName = `hero-${Date.now()}.${fileExt}`;
-      const filePath = `hero-slides/${fileName}`;
+      const fileName = `hero-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      // Upload to documents folder inside the uploads bucket
+      const filePath = `documents/hero-slides/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
+      console.log('[v0] Attempting to upload hero slide to:', filePath);
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from('uploads')
         .upload(filePath, file, {
           cacheControl: '3600',
@@ -89,17 +92,30 @@ export function HeroSliderUpload({ onSlidesChange }: HeroSliderUploadProps) {
       let imageUrl: string;
 
       if (uploadError) {
-        // Fallback: convert to base64 data URL
+        console.error('[v0] Upload error details:', uploadError);
+        console.error('[v0] Error message:', uploadError.message);
+        
+        // Check if it's a bucket not found error
+        if (uploadError.message.includes('Bucket not found') || uploadError.message.includes('not found')) {
+          alert(`Storage bucket error: ${uploadError.message}. Please ensure the 'uploads' bucket exists in Supabase Storage.`);
+          setIsUploading(false);
+          return;
+        }
+        
+        // For other errors, show the error and try base64 fallback
+        console.log('[v0] Falling back to base64 encoding');
         const reader = new FileReader();
         imageUrl = await new Promise((resolve) => {
           reader.onloadend = () => resolve(reader.result as string);
           reader.readAsDataURL(file);
         });
       } else {
+        console.log('[v0] Upload successful:', uploadData);
         const { data: { publicUrl } } = supabase.storage
           .from('uploads')
           .getPublicUrl(filePath);
         imageUrl = publicUrl;
+        console.log('[v0] Public URL:', imageUrl);
       }
 
       // Add new slide to database
@@ -120,18 +136,19 @@ export function HeroSliderUpload({ onSlidesChange }: HeroSliderUploadProps) {
         .single();
 
       if (insertError) {
-        console.error('Insert error:', insertError);
-        alert('Failed to add slide. Please try again.');
+        console.error('[v0] Insert error:', insertError);
+        alert(`Failed to add slide: ${insertError.message}`);
         return;
       }
 
       if (newSlide) {
+        console.log('[v0] Slide added successfully:', newSlide);
         setSlides([...slides, newSlide]);
         onSlidesChange?.();
       }
     } catch (error) {
-      console.error('Error uploading slide:', error);
-      alert('Failed to upload slide. Please try again.');
+      console.error('[v0] Error uploading slide:', error);
+      alert(`Failed to upload slide: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) {
@@ -150,8 +167,8 @@ export function HeroSliderUpload({ onSlidesChange }: HeroSliderUploadProps) {
       .eq('id', slideId);
 
     if (error) {
-      console.error('Delete error:', error);
-      alert('Failed to delete slide. Please try again.');
+      console.error('[v0] Delete error:', error);
+      alert(`Failed to delete slide: ${error.message}`);
       return;
     }
 
@@ -167,7 +184,7 @@ export function HeroSliderUpload({ onSlidesChange }: HeroSliderUploadProps) {
       .eq('id', slide.id);
 
     if (error) {
-      console.error('Update error:', error);
+      console.error('[v0] Update error:', error);
       return;
     }
 
@@ -185,7 +202,8 @@ export function HeroSliderUpload({ onSlidesChange }: HeroSliderUploadProps) {
       .eq('id', slide.id);
 
     if (error) {
-      console.error('Update error:', error);
+      console.error('[v0] Update error:', error);
+      alert(`Failed to update slide: ${error.message}`);
       return;
     }
 
