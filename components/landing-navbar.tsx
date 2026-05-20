@@ -48,12 +48,12 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
           className={`
             flex items-center justify-between
             px-4 sm:px-8 py-4
-            bg-white/40 backdrop-blur-xl
+            bg-white/90 backdrop-blur-xl
             rounded-full
-            border border-white/30
-            shadow-[0_8px_32px_rgba(0,0,0,0.06)]
+            border border-gray-200/50
+            shadow-[0_8px_32px_rgba(0,0,0,0.08)]
             transition-all duration-500
-            ${scrolled ? 'bg-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.1)]' : ''}
+            ${scrolled ? 'bg-white shadow-[0_8px_32px_rgba(0,0,0,0.12)]' : ''}
           `}
         >
           {/* Left - Navigation Links */}
@@ -62,7 +62,7 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300"
+                className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-300"
               >
                 {link.name}
               </Link>
@@ -72,7 +72,7 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
           {/* Mobile Menu Button - Left on mobile */}
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="md:hidden p-2 -ml-2 text-foreground hover:bg-foreground/5 rounded-full transition-colors"
+            className="md:hidden p-2 -ml-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="Open menu"
           >
             <Menu className="h-5 w-5" />
@@ -96,7 +96,7 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
                 <span className="text-sm font-medium text-background">FR</span>
               </div>
             )}
-            <span className="text-base font-semibold text-foreground hidden sm:block">
+            <span className="text-base font-semibold text-gray-900 hidden sm:block">
               Future Roots
             </span>
           </Link>
@@ -105,13 +105,13 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
           <div className="flex items-center gap-2 sm:gap-4">
             <Link 
               href="/announcements"
-              className="p-2 text-muted-foreground hover:text-foreground hover:bg-foreground/5 rounded-full transition-all duration-300 hidden sm:flex"
+              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all duration-300 hidden sm:flex"
               aria-label="Announcements"
             >
               <Bell className="h-5 w-5" />
             </Link>
             <Link href="/dashboard">
-              <button className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/90">
+              <button className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-gray-900 text-white rounded-full text-sm font-medium transition-all duration-300 hover:bg-gray-800">
                 <LayoutDashboard className="h-4 w-4" />
                 <span className="hidden sm:inline">Dashboard</span>
               </button>
