@@ -31,6 +31,7 @@ import {
 import { Plus, TrendingUp, TrendingDown, Wallet, PiggyBank, Pencil, Trash2, Loader2, Receipt, DollarSign } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { format, parseISO } from 'date-fns';
+import { Header } from '@/components/header';
 
 interface FinancesClientProps {
   members: TeamMember[];
@@ -262,7 +263,9 @@ export function FinancesClient({ members, initialContributions, initialExpenses 
   };
 
   return (
-    <main className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Finances</h1>
@@ -719,6 +722,7 @@ export function FinancesClient({ members, initialContributions, initialExpenses 
           </Card>
         </TabsContent>
       </Tabs>
-    </main>
+      </main>
+    </div>
   );
 }
