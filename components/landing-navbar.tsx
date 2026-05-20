@@ -48,12 +48,12 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
           className={`
             flex items-center justify-between
             px-4 sm:px-8 py-4
-            bg-white/60 backdrop-blur-xl
+            bg-white/40 backdrop-blur-xl
             rounded-full
-            border border-white/40
+            border border-white/30
             shadow-[0_8px_32px_rgba(0,0,0,0.06)]
             transition-all duration-500
-            ${scrolled ? 'bg-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.1)]' : ''}
+            ${scrolled ? 'bg-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.1)]' : ''}
           `}
         >
           {/* Left - Navigation Links */}
