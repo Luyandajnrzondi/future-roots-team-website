@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { Menu, X, Bell, LogIn } from 'lucide-react';
+import { Menu, X, Bell, LogIn, UserPlus } from 'lucide-react';
+import { AuthModal } from './auth-modal';
 
 interface LandingNavbarProps {
   logoUrl: string | null;
@@ -12,6 +13,8 @@ interface LandingNavbarProps {
 export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +35,18 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
       document.body.style.overflow = '';
     };
   }, [mobileMenuOpen]);
+
+  const openSignIn = () => {
+    setAuthMode('signin');
+    setAuthModalOpen(true);
+    setMobileMenuOpen(false);
+  };
+
+  const openSignUp = () => {
+    setAuthMode('signup');
+    setAuthModalOpen(true);
+    setMobileMenuOpen(false);
+  };
 
   const navLinks = [
     { name: 'Services', href: '#services' },
@@ -103,18 +118,19 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
 
           {/* Right - Actions */}
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link 
-              href="/auth/login"
+            <button 
+              onClick={openSignIn}
               className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-300 hidden sm:block"
             >
               Sign in
-            </Link>
-            <Link href="/auth/login">
-              <button className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-gray-900 text-white rounded-full text-sm font-medium transition-all duration-300 hover:bg-gray-800">
-                <LogIn className="h-4 w-4" />
-                <span className="hidden sm:inline">Get Started</span>
-              </button>
-            </Link>
+            </button>
+            <button 
+              onClick={openSignUp}
+              className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-olive text-olive-foreground rounded-full text-sm font-medium transition-all duration-300 hover:bg-olive/90 hover:shadow-lg hover:shadow-olive/25"
+            >
+              <UserPlus className="h-4 w-4" />
+              <span className="hidden sm:inline">Get Started</span>
+            </button>
           </div>
         </nav>
       </header>
@@ -197,15 +213,30 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
 
           {/* CTA */}
           <div className="p-6 pt-0 space-y-3">
-            <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
-              <button className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-base font-medium transition-all duration-300 hover:bg-foreground/90">
-                <LogIn className="h-5 w-5" />
-                Sign in
-              </button>
-            </Link>
+            <button 
+              onClick={openSignUp}
+              className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-olive text-olive-foreground rounded-full text-base font-medium transition-all duration-300 hover:bg-olive/90 hover:shadow-lg hover:shadow-olive/25"
+            >
+              <UserPlus className="h-5 w-5" />
+              Get Started
+            </button>
+            <button 
+              onClick={openSignIn}
+              className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-foreground/5 text-foreground rounded-full text-base font-medium transition-all duration-300 hover:bg-foreground/10"
+            >
+              <LogIn className="h-5 w-5" />
+              Sign in
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={authModalOpen} 
+        onClose={() => setAuthModalOpen(false)} 
+        defaultMode={authMode}
+      />
     </>
   );
 }

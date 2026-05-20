@@ -6,6 +6,7 @@ import { ArrowRight, LayoutDashboard, Users, Smartphone, Sun, Tv, Mail, Phone, M
 import { formatDistanceToNow } from 'date-fns';
 import { LandingNavbar } from '@/components/landing-navbar';
 import { HeroSlider } from '@/components/hero-slider';
+import { LandingCTA } from '@/components/landing-cta';
 
 export const dynamic = 'force-dynamic';
 
@@ -347,26 +348,7 @@ export default async function HomePage() {
         )}
 
         {/* CTA Section */}
-        <section className="py-32 border-t border-border">
-          <div className="container mx-auto px-6 text-center">
-            <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4">
-              Part of the Team?
-            </p>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-foreground mb-8 tracking-tight">
-              Access Your Dashboard
-            </h2>
-            <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
-              View schedules, track attendance, manage files, and stay updated with the latest announcements.
-            </p>
-            <Link href="/auth/login">
-              <button className="group inline-flex items-center gap-3 px-10 py-5 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-base font-medium transition-all duration-300 hover:bg-foreground/90 hover:gap-4">
-                <LayoutDashboard className="h-5 w-5" />
-                Sign in to Dashboard
-                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </button>
-            </Link>
-          </div>
-        </section>
+        <LandingCTA />
       </main>
 
       {/* Footer */}
