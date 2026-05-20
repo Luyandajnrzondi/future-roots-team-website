@@ -5,13 +5,23 @@ import Image from 'next/image';
 import { ArrowRight, LayoutDashboard, Users, Smartphone, Sun, Tv, Mail, Phone, MapPin, Monitor, Briefcase } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { LandingNavbar } from '@/components/landing-navbar';
+import { HeroSlider } from '@/components/hero-slider';
 
 export const dynamic = 'force-dynamic';
+
+interface HeroSlide {
+  id: string;
+  image_url: string;
+  title: string | null;
+  subtitle: string | null;
+  display_order: number;
+  is_active: boolean;
+}
 
 async function getLandingData() {
   const supabase = await createClient();
   
-  const [membersRes, announcementsRes, settingsRes] = await Promise.all([
+  const [membersRes, announcementsRes, settingsRes, heroSlidesRes] = await Promise.all([
     supabase.from('team_members').select('*').order('name'),
     supabase
       .from('announcements')
@@ -20,17 +30,23 @@ async function getLandingData() {
       .order('created_at', { ascending: false })
       .limit(3),
     supabase.from('site_settings').select('*').eq('key', 'logo_url').single(),
+    supabase
+      .from('hero_slides')
+      .select('*')
+      .eq('is_active', true)
+      .order('display_order', { ascending: true }),
   ]);
 
   return {
     members: (membersRes.data || []) as TeamMember[],
     announcements: (announcementsRes.data || []) as Announcement[],
     logoUrl: settingsRes.data?.value || null,
+    heroSlides: (heroSlidesRes.data || []) as HeroSlide[],
   };
 }
 
 export default async function HomePage() {
-  const { members, announcements, logoUrl } = await getLandingData();
+  const { members, announcements, logoUrl, heroSlides } = await getLandingData();
   const displayedMembers = members.slice(0, 6);
   const hasMoreMembers = members.length > 6;
 
@@ -40,24 +56,31 @@ export default async function HomePage() {
 
       <main>
         {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center justify-center pt-24 pb-20">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-muted/30 rounded-full blur-3xl" />
-            <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/20 rounded-full blur-3xl" />
-          </div>
+        <section className="relative min-h-screen flex items-center justify-center pt-24 pb-20 group">
+          {/* Background - Hero Slider or Default */}
+          {heroSlides.length > 0 ? (
+            <div className="absolute inset-0">
+              <HeroSlider initialSlides={heroSlides} autoPlayInterval={6000} />
+            </div>
+          ) : (
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-muted/30 rounded-full blur-3xl" />
+              <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/20 rounded-full blur-3xl" />
+            </div>
+          )}
           
           <div className="container mx-auto px-6 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
-              <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-8">
+              <p className={`text-sm tracking-[0.3em] uppercase mb-8 ${heroSlides.length > 0 ? 'text-foreground/80 drop-shadow-md' : 'text-muted-foreground'}`}>
                 A Team of {members.length} Dedicated Members
               </p>
               
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-light text-foreground mb-8 tracking-tight text-balance leading-[1.1]">
+              <h1 className={`text-5xl md:text-7xl lg:text-8xl font-light mb-8 tracking-tight text-balance leading-[1.1] ${heroSlides.length > 0 ? 'text-foreground drop-shadow-lg' : 'text-foreground'}`}>
                 Growing Together for a
                 <span className="block italic font-serif">Brighter Future</span>
               </h1>
               
-              <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed text-pretty">
+              <p className={`text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed text-pretty ${heroSlides.length > 0 ? 'text-foreground/90 drop-shadow-md' : 'text-muted-foreground'}`}>
                 Future Roots is a passionate team dedicated to creating sustainable solutions 
                 and empowering communities through collaboration and innovation.
               </p>

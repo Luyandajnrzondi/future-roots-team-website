@@ -21,6 +21,7 @@ import {
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { LogoUpload } from '@/components/logo-upload';
+import { HeroSliderUpload } from '@/components/hero-slider-upload';
 import { createClient } from '@/lib/supabase/client';
 import {
   DropdownMenu,
@@ -144,6 +145,9 @@ export function Header() {
                 <div className="p-2">
                   <LogoUpload currentLogoUrl={logoUrl} onLogoChange={handleLogoChange} />
                 </div>
+                <div className="p-2 pt-0">
+                  <HeroSliderUpload />
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -187,6 +191,9 @@ export function Header() {
                 <DropdownMenuSeparator />
                 <div className="p-2">
                   <LogoUpload currentLogoUrl={logoUrl} onLogoChange={handleLogoChange} />
+                </div>
+                <div className="p-2 pt-0">
+                  <HeroSliderUpload />
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
