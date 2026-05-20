@@ -448,7 +448,7 @@ export default async function HomePage() {
                   <li className="flex items-center gap-3">
                     <Phone className="h-5 w-5 text-background/50 shrink-0" />
                     <a href="tel:+27123456789" className="text-background/70 hover:text-background transition-colors">
-                      +27 12 345 6789
+                      +27 63 362 2772
                     </a>
                   </li>
                   <li className="flex items-center gap-3">
