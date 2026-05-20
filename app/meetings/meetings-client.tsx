@@ -34,6 +34,7 @@ import { Plus, Calendar, Clock, MapPin, Users, Pencil, Trash2, Loader2, Check, X
 import { createClient } from '@/lib/supabase/client';
 import { format, isPast, isToday, isFuture, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { Header } from '@/components/header';
 
 interface MeetingsClientProps {
   members: TeamMember[];
@@ -236,7 +237,9 @@ export function MeetingsClient({ members, initialMeetings, initialAttendees }: M
   };
 
   return (
-    <main className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Meetings</h1>
@@ -490,6 +493,7 @@ export function MeetingsClient({ members, initialMeetings, initialAttendees }: M
           </CardContent>
         </Card>
       )}
-    </main>
+      </main>
+    </div>
   );
 }

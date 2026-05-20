@@ -31,6 +31,7 @@ import {
 import { Plus, Clock, MapPin, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
+import { Header } from '@/components/header';
 
 interface TimetableClientProps {
   members: TeamMember[];
@@ -173,7 +174,9 @@ export function TimetableClient({ members, initialEntries }: TimetableClientProp
   };
 
   return (
-    <main className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Timetable</h1>
@@ -444,6 +447,7 @@ export function TimetableClient({ members, initialEntries }: TimetableClientProp
           </Card>
         </TabsContent>
       </Tabs>
-    </main>
+      </main>
+    </div>
   );
 }
