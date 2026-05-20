@@ -71,29 +71,29 @@ export default async function HomePage() {
           
           <div className="container mx-auto px-6 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
-              <p className={`text-sm tracking-[0.3em] uppercase mb-8 ${heroSlides.length > 0 ? 'text-foreground/80 drop-shadow-md' : 'text-muted-foreground'}`}>
+              <p className={`text-sm tracking-[0.3em] uppercase mb-8 ${heroSlides.length > 0 ? 'text-white/90 [text-shadow:_0_2px_8px_rgba(0,0,0,0.8)]' : 'text-muted-foreground'}`}>
                 A Team of {members.length} Dedicated Members
               </p>
               
-              <h1 className={`text-5xl md:text-7xl lg:text-8xl font-light mb-8 tracking-tight text-balance leading-[1.1] ${heroSlides.length > 0 ? 'text-foreground drop-shadow-lg' : 'text-foreground'}`}>
+              <h1 className={`text-5xl md:text-7xl lg:text-8xl font-light mb-8 tracking-tight text-balance leading-[1.1] ${heroSlides.length > 0 ? 'text-white [text-shadow:_0_4px_20px_rgba(0,0,0,0.9),_0_2px_8px_rgba(0,0,0,0.8)]' : 'text-foreground'}`}>
                 Growing Together for a
                 <span className="block italic font-serif">Brighter Future</span>
               </h1>
               
-              <p className={`text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed text-pretty ${heroSlides.length > 0 ? 'text-foreground/90 drop-shadow-md' : 'text-muted-foreground'}`}>
+              <p className={`text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed text-pretty ${heroSlides.length > 0 ? 'text-white/95 [text-shadow:_0_2px_10px_rgba(0,0,0,0.9),_0_1px_4px_rgba(0,0,0,0.8)]' : 'text-muted-foreground'}`}>
                 Future Roots is a passionate team dedicated to creating sustainable solutions 
                 and empowering communities through collaboration and innovation.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="#team">
-                  <button className="group inline-flex items-center gap-3 px-8 py-4 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/90 hover:gap-4">
+                  <button className={`group inline-flex items-center gap-3 px-8 py-4 rounded-full text-sm font-medium transition-all duration-300 hover:gap-4 ${heroSlides.length > 0 ? 'bg-white text-black hover:bg-white/90' : 'bg-foreground/80 backdrop-blur-sm text-background hover:bg-foreground/90'}`}>
                     Meet Our Team
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </button>
                 </Link>
                 <Link href="/dashboard">
-                  <button className="inline-flex items-center gap-3 px-8 py-4 border border-foreground/30 bg-background/50 backdrop-blur-sm text-foreground rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/10">
+                  <button className={`inline-flex items-center gap-3 px-8 py-4 border rounded-full text-sm font-medium transition-all duration-300 ${heroSlides.length > 0 ? 'border-white/50 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20' : 'border-foreground/30 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10'}`}>
                     <LayoutDashboard className="h-4 w-4" />
                     Team Dashboard
                   </button>
