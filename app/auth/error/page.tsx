@@ -13,11 +13,11 @@ export default async function AuthErrorPage({
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background">
       <div className="w-full max-w-sm">
         <Link 
-          href="/auth/login" 
+          href="/?auth=signin" 
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to login
+          Back to sign in
         </Link>
         
         <Card className="border-border/50 shadow-lg">
@@ -41,7 +41,7 @@ export default async function AuthErrorPage({
             )}
             <div className="mt-6 text-center">
               <Link
-                href="/auth/login"
+                href="/?auth=signin"
                 className="text-sm font-medium text-foreground hover:underline underline-offset-4"
               >
                 Try signing in again

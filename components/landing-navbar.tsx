@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Menu, X, Bell, LogIn, UserPlus, LayoutDashboard } from 'lucide-react';
 import { AuthModal } from './auth-modal';
 import { createClient } from '@/lib/supabase/client';
@@ -19,6 +20,22 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Handle auth query parameter to auto-open modal
+  useEffect(() => {
+    const authParam = searchParams.get('auth');
+    if (authParam === 'signin' || authParam === 'signup') {
+      setAuthMode(authParam);
+      setAuthModalOpen(true);
+      // Clear the auth param from URL without triggering navigation
+      const url = new URL(window.location.href);
+      url.searchParams.delete('auth');
+      url.searchParams.delete('redirect');
+      window.history.replaceState({}, '', url.pathname + url.search);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const supabase = createClient();
