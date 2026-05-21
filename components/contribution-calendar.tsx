@@ -26,7 +26,7 @@ function getStatusColor(status: string | undefined) {
     case 'present':
       return 'bg-[#2d5a27]';
     case 'late':
-      return 'bg-[#6b9d64]';
+      return 'bg-[#FEBA4F]';
     case 'excused':
       return 'bg-[#8cbf85]';
     case 'absent':
