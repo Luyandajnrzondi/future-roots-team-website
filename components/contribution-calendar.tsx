@@ -76,13 +76,13 @@ export function ContributionCalendar({
     return map;
   }, [attendance]);
 
-  // Generate all 365/366 days of the year organized by weeks
+  // Generate days from June 1 to November 30 organized by weeks
   const weeks = useMemo(() => {
     const result: { date: Date; dateStr: string }[][] = [];
-    const startDate = new Date(year, 0, 1);
-    const endDate = new Date(year, 11, 31);
+    const startDate = new Date(year, 5, 1); // June 1
+    const endDate = new Date(year, 10, 30); // November 30
     
-    // Start from the first Sunday on or before Jan 1
+    // Start from the first Sunday on or before June 1
     const firstDay = new Date(startDate);
     firstDay.setDate(firstDay.getDate() - firstDay.getDay());
     
@@ -112,14 +112,19 @@ export function ContributionCalendar({
     return result;
   }, [year]);
 
-  // Calculate month label positions
+  // Calculate month label positions (only Jun-Nov)
   const monthLabels = useMemo(() => {
     const labels: { month: string; weekIndex: number }[] = [];
     let lastMonth = -1;
+    const startMonth = 5; // June
+    const endMonth = 10; // November
     
     weeks.forEach((week, weekIndex) => {
-      // Find the first day of this week that's in the current year
-      const dayInYear = week.find(d => d.date.getFullYear() === year);
+      // Find the first day of this week that's in the current year and within our range
+      const dayInYear = week.find(d => {
+        const month = d.date.getMonth();
+        return d.date.getFullYear() === year && month >= startMonth && month <= endMonth;
+      });
       if (dayInYear) {
         const month = dayInYear.date.getMonth();
         if (month !== lastMonth) {
@@ -132,7 +137,7 @@ export function ContributionCalendar({
     return labels;
   }, [weeks, year]);
 
-  const totalDays = getDaysInYear(year);
+  const totalDays = 183; // June 1 to November 30 = 183 days
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 

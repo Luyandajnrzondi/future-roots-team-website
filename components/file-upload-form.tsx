@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/dialog';
 import { Upload, Link2, Loader2, Plus, Video, Image as ImageIcon } from 'lucide-react';
 import { TeamMember } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
 
 interface FileUploadFormProps {
   teamMembers: TeamMember[];
@@ -42,6 +43,7 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
   const [file, setFile] = useState<File | null>(null);
 
   const supabase = createClient();
+  const { toast } = useToast();
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -124,6 +126,12 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
       });
 
       if (insertError) throw insertError;
+
+      // Show success toast
+      toast({
+        title: 'Upload Added',
+        description: `"${title}" has been uploaded successfully.`,
+      });
 
       resetForm();
       setOpen(false);

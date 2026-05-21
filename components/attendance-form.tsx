@@ -21,6 +21,7 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { Plus, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
 
 interface AttendanceFormProps {
   teamMembers: TeamMember[];
@@ -35,6 +36,7 @@ export function AttendanceForm({ teamMembers, onSubmit }: AttendanceFormProps) {
   const [status, setStatus] = useState<string>('present');
 
   const supabase = createClient();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +55,13 @@ export function AttendanceForm({ teamMembers, onSubmit }: AttendanceFormProps) {
       );
 
       if (error) throw error;
+
+      const memberName = teamMembers.find(m => m.id === memberId)?.name || 'Member';
+      // Show success toast
+      toast({
+        title: 'Attendance Recorded',
+        description: `${memberName} marked as ${status} for ${format(date, 'MMM d, yyyy')}.`,
+      });
 
       setMemberId('');
       setDate(new Date());

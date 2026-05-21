@@ -35,6 +35,7 @@ import { createClient } from '@/lib/supabase/client';
 import { format, isPast, isToday, isFuture, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/header';
+import { useToast } from '@/hooks/use-toast';
 
 interface MeetingsClientProps {
   members: TeamMember[];
@@ -72,6 +73,7 @@ export function MeetingsClient({ members, initialMeetings, initialAttendees }: M
 
   const router = useRouter();
   const supabase = createClient();
+  const { toast } = useToast();
 
   const filteredMeetings = useMemo(() => {
     const today = new Date();
@@ -190,6 +192,14 @@ export function MeetingsClient({ members, initialMeetings, initialAttendees }: M
         .from('meeting_attendees')
         .select('*');
       if (newAttendees) setAttendees(newAttendees);
+
+      // Show success toast
+      toast({
+        title: editingMeeting ? 'Meeting Updated' : 'Meeting Scheduled',
+        description: editingMeeting 
+          ? `"${title}" has been updated successfully.`
+          : `"${title}" has been scheduled successfully.`,
+      });
     } catch (error) {
       console.error('Error saving meeting:', error);
     } finally {

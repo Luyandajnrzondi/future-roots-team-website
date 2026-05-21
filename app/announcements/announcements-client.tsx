@@ -47,6 +47,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatDistanceToNow } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
 
 interface AnnouncementsClientProps {
   announcements: (Announcement & { creator?: TeamMember })[];
@@ -78,6 +79,7 @@ const typeConfig = {
 
 export function AnnouncementsClient({ announcements: initialAnnouncements, members }: AnnouncementsClientProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [announcements, setAnnouncements] = useState(initialAnnouncements);
   const [isOpen, setIsOpen] = useState(false);
   const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
@@ -125,6 +127,14 @@ export function AnnouncementsClient({ announcements: initialAnnouncements, membe
 
         if (error) throw error;
       }
+
+      // Show success toast
+      toast({
+        title: editingAnnouncement ? 'Announcement Updated' : 'Announcement Created',
+        description: editingAnnouncement 
+          ? `"${formData.title}" has been updated successfully.`
+          : `"${formData.title}" has been created successfully.`,
+      });
 
       setIsOpen(false);
       resetForm();
