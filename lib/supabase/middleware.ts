@@ -33,7 +33,7 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Protected routes - redirect to login if not authenticated
+  // Protected routes - redirect to homepage with auth param if not authenticated
   const protectedRoutes = [
     '/dashboard',
     '/team',
@@ -51,14 +51,24 @@ export async function updateSession(request: NextRequest) {
 
   if (isProtectedRoute && !user) {
     const url = request.nextUrl.clone()
-    url.pathname = '/auth/login'
+    url.pathname = '/'
+    url.searchParams.set('auth', 'signin')
+    url.searchParams.set('redirect', request.nextUrl.pathname)
     return NextResponse.redirect(url)
   }
 
-  // Redirect authenticated users away from auth pages (login and sign-up)
-  if (user && (request.nextUrl.pathname.startsWith('/auth/login') || request.nextUrl.pathname.startsWith('/auth/sign-up'))) {
+  // Redirect anyone visiting /auth/login or /auth/sign-up to homepage with auth popup
+  if (request.nextUrl.pathname.startsWith('/auth/login') || request.nextUrl.pathname.startsWith('/auth/sign-up')) {
     const url = request.nextUrl.clone()
-    url.pathname = '/dashboard'
+    url.pathname = '/'
+    // Determine which auth mode based on the path
+    const authMode = request.nextUrl.pathname.includes('sign-up') ? 'signup' : 'signin'
+    url.searchParams.set('auth', authMode)
+    // If user is authenticated, redirect to dashboard instead
+    if (user) {
+      url.pathname = '/dashboard'
+      url.searchParams.delete('auth')
+    }
     return NextResponse.redirect(url)
   }
 

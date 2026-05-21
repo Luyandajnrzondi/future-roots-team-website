@@ -34,7 +34,7 @@ export default function SignUpSuccessPage() {
             <div className="text-center text-sm">
               <span className="text-muted-foreground">Already confirmed?</span>{' '}
               <Link
-                href="/auth/login"
+                href="/?auth=signin"
                 className="font-medium text-foreground hover:underline underline-offset-4"
               >
                 Sign in
