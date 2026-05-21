@@ -48,7 +48,7 @@ export function AttendancePageClient({ members, initialAttendance }: AttendanceP
         <div>
           <h1 className="text-3xl font-bold text-foreground">Attendance</h1>
           <p className="text-muted-foreground mt-1">
-            Track class attendance with a GitHub-style contribution calendar
+            Track class attendance contribution calendar
           </p>
         </div>
         <AttendanceForm teamMembers={members} onSubmit={handleRefresh} />
