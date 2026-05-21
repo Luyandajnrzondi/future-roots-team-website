@@ -188,7 +188,7 @@ export function ContributionCalendar({
               <span className="text-muted-foreground">Present: {stats.present}</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-sm bg-[#6b9d64]" />
+              <div className="w-3 h-3 rounded-sm bg-[#FEBA4F]" />
               <span className="text-muted-foreground">Late: {stats.late}</span>
             </div>
             <div className="flex items-center gap-1">
