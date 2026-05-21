@@ -300,7 +300,7 @@ export function ContributionCalendar({
               <div className="flex gap-1">
                 <div className="w-[11px] h-[11px] rounded-sm bg-gray-200" title="No record" />
                 <div className="w-[11px] h-[11px] rounded-sm bg-[#8cbf85]" title="Excused" />
-                <div className="w-[11px] h-[11px] rounded-sm bg-[#6b9d64]" title="Late" />
+                <div className="w-[11px] h-[11px] rounded-sm bg-[#FEBA4F]" title="Late" />
                 <div className="w-[11px] h-[11px] rounded-sm bg-[#2d5a27]" title="Present" />
               </div>
               <span>More</span>
