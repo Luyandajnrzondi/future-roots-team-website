@@ -107,7 +107,7 @@ export function AttendancePageClient({ members, initialAttendance }: AttendanceP
             <CardTitle className="text-sm font-medium text-muted-foreground">Late</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#6b9d64]">{lateCount}</div>
+            <div className="text-2xl font-bold text-[#FEBA4F]">{lateCount}</div>
           </CardContent>
         </Card>
         <Card className="bg-white/70 backdrop-blur-sm border-border/50">
