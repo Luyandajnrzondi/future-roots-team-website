@@ -11,8 +11,16 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, Save, User, Mail, Phone, Building2, MessageSquare, Unlink, Camera } from 'lucide-react';
+import { Loader2, Save, User, Mail, Phone, Building2, MessageSquare, Unlink, Camera, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 interface ProfileEditorProps {
   member: TeamMember;
@@ -24,9 +32,17 @@ export function ProfileEditor({ member, positions }: ProfileEditorProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isUnlinking, setIsUnlinking] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Password change form state
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   
   const [name, setName] = useState(member.name);
   const [position, setPosition] = useState(member.position);
