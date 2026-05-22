@@ -17,10 +17,12 @@ import {
 interface AttendancePageClientProps {
   members: TeamMember[];
   initialAttendance: Attendance[];
+  currentMemberId: string | null;
 }
 
-export function AttendancePageClient({ members, initialAttendance }: AttendancePageClientProps) {
-  const [selectedMember, setSelectedMember] = useState<string>('all');
+export function AttendancePageClient({ members, initialAttendance, currentMemberId }: AttendancePageClientProps) {
+  // Default to current user's member if logged in, otherwise 'all'
+  const [selectedMember, setSelectedMember] = useState<string>(currentMemberId || 'all');
   const [year, setYear] = useState(new Date().getFullYear());
   const router = useRouter();
 

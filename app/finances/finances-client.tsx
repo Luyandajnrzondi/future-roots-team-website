@@ -37,6 +37,7 @@ interface FinancesClientProps {
   members: TeamMember[];
   initialContributions: Contribution[];
   initialExpenses: Expense[];
+  currentMemberId: string | null;
 }
 
 const EXPENSE_CATEGORIES = [
@@ -58,10 +59,12 @@ function formatCurrency(amount: number) {
   }).format(amount);
 }
 
-export function FinancesClient({ members, initialContributions, initialExpenses }: FinancesClientProps) {
+export function FinancesClient({ members, initialContributions, initialExpenses, currentMemberId }: FinancesClientProps) {
   const [contributions, setContributions] = useState<Contribution[]>(initialContributions);
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
   const [activeTab, setActiveTab] = useState('overview');
+  // Filter contributions by member - default to current user's member if logged in
+  const [selectedContributionMember, setSelectedContributionMember] = useState<string>(currentMemberId || 'all');
   
   // Contribution dialog state
   const [contributionDialogOpen, setContributionDialogOpen] = useState(false);
@@ -85,9 +88,14 @@ export function FinancesClient({ members, initialContributions, initialExpenses 
 
   const supabase = createClient();
 
-  // Calculate totals
+  // Filter contributions based on selected member
+  const filteredContributions = selectedContributionMember === 'all'
+    ? contributions
+    : contributions.filter(c => c.member_id === selectedContributionMember);
+
+  // Calculate totals - use filtered contributions for personal view
   const totals = useMemo(() => {
-    const totalContributions = contributions.reduce((sum, c) => sum + Number(c.amount), 0);
+    const totalContributions = filteredContributions.reduce((sum, c) => sum + Number(c.amount), 0);
     const totalExpenses = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
     const balance = totalContributions - totalExpenses;
     
@@ -108,7 +116,7 @@ export function FinancesClient({ members, initialContributions, initialExpenses 
     }).filter(c => c.total > 0);
 
     return { totalContributions, totalExpenses, balance, memberContributions, categoryExpenses };
-  }, [contributions, expenses, members]);
+  }, [filteredContributions, expenses, members]);
 
   // Contribution handlers
   const resetContributionForm = () => {
