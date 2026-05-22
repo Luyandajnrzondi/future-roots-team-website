@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/dialog';
 import { Upload, Link2, Loader2, Plus, Video, Image as ImageIcon } from 'lucide-react';
 import { TeamMember } from '@/lib/types';
+import { useCurrentMember } from '@/contexts/member-context';
 
 interface FileUploadFormProps {
   teamMembers: TeamMember[];
@@ -40,8 +41,16 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
   const [category, setCategory] = useState('general');
   const [uploadedBy, setUploadedBy] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const { currentMember } = useCurrentMember();
 
   const supabase = createClient();
+
+  // Auto-populate uploader when current member changes
+  useEffect(() => {
+    if (currentMember) {
+      setUploadedBy(currentMember.id);
+    }
+  }, [currentMember]);
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -59,7 +68,7 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
     setLinkUrl('');
     setFile(null);
     setCategory('general');
-    setUploadedBy('');
+    setUploadedBy(currentMember?.id || '');
     setUploadType('file');
   };
 

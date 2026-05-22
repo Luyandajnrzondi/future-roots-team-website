@@ -30,6 +30,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { MemberSelector } from '@/components/member-selector';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -125,6 +126,7 @@ export function Header() {
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-2">
+            <MemberSelector />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
@@ -150,6 +152,7 @@ export function Header() {
 
           {/* Tablet Navigation (icons only) */}
           <nav className="hidden md:flex lg:hidden items-center gap-1">
+            <MemberSelector />
             {navigation.slice(0, 6).map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -295,7 +298,11 @@ export function Header() {
 
           {/* Settings */}
           <div className="p-4 pt-0 border-t border-border/30 mt-2">
-            <p className="text-xs text-muted-foreground px-4 py-2">Settings</p>
+            <p className="text-xs text-muted-foreground px-4 py-2">Your Profile</p>
+            <div className="px-4 py-2">
+              <MemberSelector />
+            </div>
+            <p className="text-xs text-muted-foreground px-4 py-2 mt-2">Settings</p>
             <div className="px-4 py-3">
               <LogoUpload currentLogoUrl={logoUrl} onLogoChange={handleLogoChange} />
             </div>

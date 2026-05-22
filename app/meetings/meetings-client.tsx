@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { TeamMember, Meeting, MeetingAttendee } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,6 +35,7 @@ import { createClient } from '@/lib/supabase/client';
 import { format, isPast, isToday, isFuture, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/header';
+import { useCurrentMember } from '@/contexts/member-context';
 
 interface MeetingsClientProps {
   members: TeamMember[];
@@ -58,6 +59,7 @@ export function MeetingsClient({ members, initialMeetings, initialAttendees }: M
   const [editingMeeting, setEditingMeeting] = useState<Meeting | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [viewMode, setViewMode] = useState<'upcoming' | 'past' | 'all'>('upcoming');
+  const { currentMember } = useCurrentMember();
   
   // Form state
   const [title, setTitle] = useState('');
@@ -72,6 +74,13 @@ export function MeetingsClient({ members, initialMeetings, initialAttendees }: M
 
   const router = useRouter();
   const supabase = createClient();
+
+  // Auto-populate organizer when current member changes
+  useEffect(() => {
+    if (currentMember && !editingMeeting) {
+      setCreatedBy(currentMember.id);
+    }
+  }, [currentMember, editingMeeting]);
 
   const filteredMeetings = useMemo(() => {
     const today = new Date();
@@ -96,7 +105,7 @@ export function MeetingsClient({ members, initialMeetings, initialAttendees }: M
     setEndTime('10:00');
     setLocation('');
     setMeetingType('general');
-    setCreatedBy('');
+    setCreatedBy(currentMember?.id || '');
     setSelectedAttendees([]);
     setEditingMeeting(null);
   };
