@@ -3,7 +3,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { Menu, X, LayoutDashboard, Bell } from 'lucide-react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Menu, X, Bell, LogIn, UserPlus, LayoutDashboard } from 'lucide-react';
+import { AuthModal } from './auth-modal';
+import { createClient } from '@/lib/supabase/client';
+import type { User } from '@supabase/supabase-js';
 
 interface LandingNavbarProps {
   logoUrl: string | null;
@@ -12,6 +16,43 @@ interface LandingNavbarProps {
 export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Handle auth query parameter to auto-open modal
+  useEffect(() => {
+    const authParam = searchParams.get('auth');
+    if (authParam === 'signin' || authParam === 'signup') {
+      setAuthMode(authParam);
+      setAuthModalOpen(true);
+      // Clear the auth param from URL without triggering navigation
+      const url = new URL(window.location.href);
+      url.searchParams.delete('auth');
+      url.searchParams.delete('redirect');
+      window.history.replaceState({}, '', url.pathname + url.search);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const supabase = createClient();
+    
+    // Get initial user
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+      setIsLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,6 +74,18 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
     };
   }, [mobileMenuOpen]);
 
+  const openSignIn = () => {
+    setAuthMode('signin');
+    setAuthModalOpen(true);
+    setMobileMenuOpen(false);
+  };
+
+  const openSignUp = () => {
+    setAuthMode('signup');
+    setAuthModalOpen(true);
+    setMobileMenuOpen(false);
+  };
+
   const navLinks = [
     { name: 'Services', href: '#services' },
     { name: 'About', href: '#about' },
@@ -48,12 +101,12 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
           className={`
             flex items-center justify-between
             px-4 sm:px-8 py-4
-            bg-white/40 backdrop-blur-xl
+            bg-white/90 backdrop-blur-xl
             rounded-full
-            border border-white/30
-            shadow-[0_8px_32px_rgba(0,0,0,0.06)]
+            border border-gray-200/50
+            shadow-[0_8px_32px_rgba(0,0,0,0.08)]
             transition-all duration-500
-            ${scrolled ? 'bg-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.1)]' : ''}
+            ${scrolled ? 'bg-white shadow-[0_8px_32px_rgba(0,0,0,0.12)]' : ''}
           `}
         >
           {/* Left - Navigation Links */}
@@ -62,7 +115,7 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300"
+                className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-300"
               >
                 {link.name}
               </Link>
@@ -72,7 +125,7 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
           {/* Mobile Menu Button - Left on mobile */}
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="md:hidden p-2 -ml-2 text-foreground hover:bg-foreground/5 rounded-full transition-colors"
+            className="md:hidden p-2 -ml-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="Open menu"
           >
             <Menu className="h-5 w-5" />
@@ -96,26 +149,39 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
                 <span className="text-sm font-medium text-background">FR</span>
               </div>
             )}
-            <span className="text-base font-semibold text-foreground hidden sm:block">
+            <span className="text-base font-semibold text-gray-900 hidden sm:block">
               Future Roots
             </span>
           </Link>
 
           {/* Right - Actions */}
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link 
-              href="/announcements"
-              className="p-2 text-muted-foreground hover:text-foreground hover:bg-foreground/5 rounded-full transition-all duration-300 hidden sm:flex"
-              aria-label="Announcements"
-            >
-              <Bell className="h-5 w-5" />
-            </Link>
-            <Link href="/dashboard">
-              <button className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/90">
-                <LayoutDashboard className="h-4 w-4" />
-                <span className="hidden sm:inline">Dashboard</span>
-              </button>
-            </Link>
+            {!isLoading && (
+              user ? (
+                <Link href="/dashboard">
+                  <button className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-olive text-olive-foreground rounded-full text-sm font-medium transition-all duration-300 hover:bg-olive/90 hover:shadow-lg hover:shadow-olive/25">
+                    <LayoutDashboard className="h-4 w-4" />
+                    <span className="hidden sm:inline">Dashboard</span>
+                  </button>
+                </Link>
+              ) : (
+                <>
+                  <button 
+                    onClick={openSignIn}
+                    className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-300 hidden sm:block"
+                  >
+                    Sign in
+                  </button>
+                  <button 
+                    onClick={openSignUp}
+                    className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-olive text-olive-foreground rounded-full text-sm font-medium transition-all duration-300 hover:bg-olive/90 hover:shadow-lg hover:shadow-olive/25"
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    <span className="hidden sm:inline">Get Started</span>
+                  </button>
+                </>
+              )
+            )}
           </div>
         </nav>
       </header>
@@ -197,16 +263,44 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
           </nav>
 
           {/* CTA */}
-          <div className="p-6 pt-0">
-            <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-              <button className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-base font-medium transition-all duration-300 hover:bg-foreground/90">
-                <LayoutDashboard className="h-5 w-5" />
-                Team Dashboard
-              </button>
-            </Link>
+          <div className="p-6 pt-0 space-y-3">
+            {!isLoading && (
+              user ? (
+                <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                  <button className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-olive text-olive-foreground rounded-full text-base font-medium transition-all duration-300 hover:bg-olive/90 hover:shadow-lg hover:shadow-olive/25">
+                    <LayoutDashboard className="h-5 w-5" />
+                    Go to Dashboard
+                  </button>
+                </Link>
+              ) : (
+                <>
+                  <button 
+                    onClick={openSignUp}
+                    className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-olive text-olive-foreground rounded-full text-base font-medium transition-all duration-300 hover:bg-olive/90 hover:shadow-lg hover:shadow-olive/25"
+                  >
+                    <UserPlus className="h-5 w-5" />
+                    Get Started
+                  </button>
+                  <button 
+                    onClick={openSignIn}
+                    className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-foreground/5 text-foreground rounded-full text-base font-medium transition-all duration-300 hover:bg-foreground/10"
+                  >
+                    <LogIn className="h-5 w-5" />
+                    Sign in
+                  </button>
+                </>
+              )
+            )}
           </div>
         </div>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={authModalOpen} 
+        onClose={() => setAuthModalOpen(false)} 
+        defaultMode={authMode}
+      />
     </>
   );
 }

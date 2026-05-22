@@ -23,6 +23,7 @@ import {
 import { Upload, Link2, Loader2, Plus, Video, Image as ImageIcon } from 'lucide-react';
 import { TeamMember } from '@/lib/types';
 import { useCurrentMember } from '@/contexts/member-context';
+import { useToast } from '@/hooks/use-toast';
 
 interface FileUploadFormProps {
   teamMembers: TeamMember[];
@@ -44,6 +45,7 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
   const { currentMember } = useCurrentMember();
 
   const supabase = createClient();
+  const { toast } = useToast();
 
   // Auto-populate uploader when current member changes
   useEffect(() => {
@@ -133,6 +135,12 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
       });
 
       if (insertError) throw insertError;
+
+      // Show success toast
+      toast({
+        title: 'Upload Added',
+        description: `"${title}" has been uploaded successfully.`,
+      });
 
       resetForm();
       setOpen(false);

@@ -17,10 +17,12 @@ import {
 interface AttendancePageClientProps {
   members: TeamMember[];
   initialAttendance: Attendance[];
+  currentMemberId: string | null;
 }
 
-export function AttendancePageClient({ members, initialAttendance }: AttendancePageClientProps) {
-  const [selectedMember, setSelectedMember] = useState<string>('all');
+export function AttendancePageClient({ members, initialAttendance, currentMemberId }: AttendancePageClientProps) {
+  // Default to current user's member if logged in, otherwise 'all'
+  const [selectedMember, setSelectedMember] = useState<string>(currentMemberId || 'all');
   const [year, setYear] = useState(new Date().getFullYear());
   const router = useRouter();
 
@@ -48,7 +50,7 @@ export function AttendancePageClient({ members, initialAttendance }: AttendanceP
         <div>
           <h1 className="text-3xl font-bold text-foreground">Attendance</h1>
           <p className="text-muted-foreground mt-1">
-            Track class attendance with a GitHub-style contribution calendar
+            Track class attendance contribution calendar
           </p>
         </div>
         <AttendanceForm teamMembers={members} onSubmit={handleRefresh} />
@@ -107,7 +109,7 @@ export function AttendancePageClient({ members, initialAttendance }: AttendanceP
             <CardTitle className="text-sm font-medium text-muted-foreground">Late</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#6b9d64]">{lateCount}</div>
+            <div className="text-2xl font-bold text-[#FEBA4F]">{lateCount}</div>
           </CardContent>
         </Card>
         <Card className="bg-white/70 backdrop-blur-sm border-border/50">

@@ -23,6 +23,8 @@
   --border: rgba(28, 25, 23, 0.08);
   --input: #E7E5E4;
   --ring: #1C1917;
+  --olive: #6B7B5F;
+  --olive-foreground: #ffffff;
   --chart-1: #1C1917;
   --chart-2: #44403C;
   --chart-3: #78716C;
@@ -96,6 +98,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-olive: var(--olive);
+  --color-olive-foreground: var(--olive-foreground);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);

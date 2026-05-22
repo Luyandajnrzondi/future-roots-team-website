@@ -16,11 +16,15 @@ import {
   Bell,
   Home,
   Settings,
-  X
+  X,
+  LogOut,
+  User
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { LogoUpload } from '@/components/logo-upload';
+import { HeroSliderUpload } from '@/components/hero-slider-upload';
 import { createClient } from '@/lib/supabase/client';
 import {
   DropdownMenu,
@@ -45,8 +49,16 @@ const navigation = [
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push('/');
+    router.refresh();
+  };
 
   useEffect(() => {
     const fetchLogo = async () => {
@@ -137,6 +149,12 @@ export function Header() {
                 <DropdownMenuLabel className="text-xs text-muted-foreground">Settings</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
+                  <Link href="/profile" className="flex items-center gap-2 cursor-pointer rounded-lg">
+                    <User className="h-4 w-4" />
+                    My Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link href="/" className="flex items-center gap-2 cursor-pointer rounded-lg">
                     <Home className="h-4 w-4" />
                     Public Home Page
@@ -146,6 +164,17 @@ export function Header() {
                 <div className="p-2">
                   <LogoUpload currentLogoUrl={logoUrl} onLogoChange={handleLogoChange} />
                 </div>
+                <div className="p-2 pt-0">
+                  <HeroSliderUpload />
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={handleSignOut}
+                  className="flex items-center gap-2 cursor-pointer rounded-lg text-destructive focus:text-destructive"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign out
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -182,6 +211,12 @@ export function Header() {
                 <DropdownMenuLabel className="text-xs text-muted-foreground">Settings</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
+                  <Link href="/profile" className="flex items-center gap-2 cursor-pointer rounded-lg">
+                    <User className="h-4 w-4" />
+                    My Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link href="/" className="flex items-center gap-2 cursor-pointer rounded-lg">
                     <Home className="h-4 w-4" />
                     Public Home Page
@@ -191,6 +226,17 @@ export function Header() {
                 <div className="p-2">
                   <LogoUpload currentLogoUrl={logoUrl} onLogoChange={handleLogoChange} />
                 </div>
+                <div className="p-2 pt-0">
+                  <HeroSliderUpload />
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={handleSignOut}
+                  className="flex items-center gap-2 cursor-pointer rounded-lg text-destructive focus:text-destructive"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign out
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </nav>
@@ -303,9 +349,27 @@ export function Header() {
               <MemberSelector />
             </div>
             <p className="text-xs text-muted-foreground px-4 py-2 mt-2">Settings</p>
+            <Link
+              href="/profile"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all duration-300 text-foreground hover:bg-foreground/5"
+            >
+              <User className="h-5 w-5" />
+              My Profile
+            </Link>
             <div className="px-4 py-3">
               <LogoUpload currentLogoUrl={logoUrl} onLogoChange={handleLogoChange} />
             </div>
+            <button
+              onClick={() => {
+                setMobileOpen(false);
+                handleSignOut();
+              }}
+              className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all duration-300 text-destructive hover:bg-destructive/10 w-full"
+            >
+              <LogOut className="h-5 w-5" />
+              Sign out
+            </button>
           </div>
         </div>
       </div>
