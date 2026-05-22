@@ -2,7 +2,7 @@
 
 import { TeamMember } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 
@@ -27,6 +27,9 @@ export function TeamMemberCard({ member }: TeamMemberCardProps) {
         <CardContent className="p-6">
           <div className="flex flex-col items-center text-center gap-4">
             <Avatar className="h-20 w-20 ring-4 ring-foreground/5 group-hover:ring-foreground/20 transition-all">
+              {member.avatar_url ? (
+                <AvatarImage src={member.avatar_url} alt={member.name} className="object-cover" />
+              ) : null}
               <AvatarFallback className="bg-foreground/5 text-foreground text-xl font-medium">
                 {initials}
               </AvatarFallback>

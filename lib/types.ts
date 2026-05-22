@@ -118,3 +118,14 @@ export interface SiteSetting {
   created_at: string;
   updated_at: string;
 }
+
+export interface HeroSlide {
+  id: string;
+  image_url: string;
+  title: string | null;
+  subtitle: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}

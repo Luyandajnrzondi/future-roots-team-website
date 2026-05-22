@@ -1,17 +1,18 @@
 import { createClient } from '@/lib/supabase/server';
-import { TeamMember, Announcement } from '@/lib/types';
+import { TeamMember, Announcement, HeroSlide } from '@/lib/types';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, LayoutDashboard, Users, Smartphone, Sun, Tv, Mail, Phone, MapPin, Monitor, Briefcase } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { LandingNavbar } from '@/components/landing-navbar';
+import { HeroSlider } from '@/components/hero-slider';
 
 export const dynamic = 'force-dynamic';
 
 async function getLandingData() {
   const supabase = await createClient();
   
-  const [membersRes, announcementsRes, settingsRes] = await Promise.all([
+  const [membersRes, announcementsRes, settingsRes, heroSlidesRes] = await Promise.all([
     supabase.from('team_members').select('*').order('name'),
     supabase
       .from('announcements')
@@ -20,17 +21,23 @@ async function getLandingData() {
       .order('created_at', { ascending: false })
       .limit(3),
     supabase.from('site_settings').select('*').eq('key', 'logo_url').single(),
+    supabase
+      .from('hero_slides')
+      .select('*')
+      .eq('is_active', true)
+      .order('display_order', { ascending: true }),
   ]);
 
   return {
     members: (membersRes.data || []) as TeamMember[],
     announcements: (announcementsRes.data || []) as Announcement[],
     logoUrl: settingsRes.data?.value || null,
+    heroSlides: (heroSlidesRes.data || []) as HeroSlide[],
   };
 }
 
 export default async function HomePage() {
-  const { members, announcements, logoUrl } = await getLandingData();
+  const { members, announcements, logoUrl, heroSlides } = await getLandingData();
   const displayedMembers = members.slice(0, 6);
   const hasMoreMembers = members.length > 6;
 
@@ -47,35 +54,49 @@ export default async function HomePage() {
           </div>
           
           <div className="container mx-auto px-6 relative z-10">
-            <div className="max-w-4xl mx-auto text-center">
-              <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-8">
-                A Team of {members.length} Dedicated Members
-              </p>
-              
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-light text-foreground mb-8 tracking-tight text-balance leading-[1.1]">
-                Growing Together for a
-                <span className="block italic font-serif">Brighter Future</span>
-              </h1>
-              
-              <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed text-pretty">
-                Future Roots is a passionate team dedicated to creating sustainable solutions 
-                and empowering communities through collaboration and innovation.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="#team">
-                  <button className="group inline-flex items-center gap-3 px-8 py-4 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/90 hover:gap-4">
-                    Meet Our Team
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </button>
-                </Link>
-                <Link href="/dashboard">
-                  <button className="inline-flex items-center gap-3 px-8 py-4 border border-foreground/30 bg-background/50 backdrop-blur-sm text-foreground rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/10">
-                    <LayoutDashboard className="h-4 w-4" />
-                    Team Dashboard
-                  </button>
-                </Link>
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Left: Text Content */}
+              <div className="text-center lg:text-left">
+                <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-8">
+                  A Team of {members.length} Dedicated Members
+                </p>
+                
+                <h1 className="text-5xl md:text-7xl lg:text-6xl xl:text-7xl font-light text-foreground mb-8 tracking-tight text-balance leading-[1.1]">
+                  Growing Together for a
+                  <span className="block italic font-serif">Brighter Future</span>
+                </h1>
+                
+                <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto lg:mx-0 leading-relaxed text-pretty">
+                  Future Roots is a passionate team dedicated to creating sustainable solutions 
+                  and empowering communities through collaboration and innovation.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                  <Link href="#team">
+                    <button className="group inline-flex items-center gap-3 px-8 py-4 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/90 hover:gap-4">
+                      Meet Our Team
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </button>
+                  </Link>
+                  <Link href="/dashboard">
+                    <button className="inline-flex items-center gap-3 px-8 py-4 border border-foreground/30 bg-background/50 backdrop-blur-sm text-foreground rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/10">
+                      <LayoutDashboard className="h-4 w-4" />
+                      Team Dashboard
+                    </button>
+                  </Link>
+                </div>
               </div>
+
+              {/* Right: Hero Slider */}
+              {heroSlides.length > 0 && (
+                <div className="relative h-[400px] md:h-[500px] lg:h-[600px]">
+                  <HeroSlider 
+                    slides={heroSlides} 
+                    autoplayDelay={5000}
+                    className="h-full"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </section>
