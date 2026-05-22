@@ -1,5 +1,6 @@
 export interface TeamMember {
   id: string;
+  user_id: string | null;
   name: string;
   position: string;
   avatar_url: string | null;
