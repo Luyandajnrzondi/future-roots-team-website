@@ -18,9 +18,10 @@ import { Search } from 'lucide-react';
 interface UploadsPageClientProps {
   members: TeamMember[];
   initialUploads: Upload[];
+  currentMember: { id: string; name: string } | null;
 }
 
-export function UploadsPageClient({ members, initialUploads }: UploadsPageClientProps) {
+export function UploadsPageClient({ members, initialUploads, currentMember }: UploadsPageClientProps) {
   const [category, setCategory] = useState<string>('all');
   const [search, setSearch] = useState('');
   const router = useRouter();
@@ -48,7 +49,7 @@ export function UploadsPageClient({ members, initialUploads }: UploadsPageClient
             Share files, documents, and links with your team
           </p>
         </div>
-        <FileUploadForm teamMembers={members} onUploadComplete={handleRefresh} />
+        <FileUploadForm teamMembers={members} onUploadComplete={handleRefresh} currentMember={currentMember} />
       </div>
 
       {/* Filters */}

@@ -41,6 +41,7 @@ interface MeetingsClientProps {
   members: TeamMember[];
   initialMeetings: Meeting[];
   initialAttendees: MeetingAttendee[];
+  currentMember: { id: string; name: string } | null;
 }
 
 const MEETING_TYPES = [
@@ -52,7 +53,7 @@ const MEETING_TYPES = [
   { value: 'emergency', label: 'Emergency' },
 ];
 
-export function MeetingsClient({ members, initialMeetings, initialAttendees }: MeetingsClientProps) {
+export function MeetingsClient({ members, initialMeetings, initialAttendees, currentMember }: MeetingsClientProps) {
   const [meetings, setMeetings] = useState<Meeting[]>(initialMeetings);
   const [attendees, setAttendees] = useState<MeetingAttendee[]>(initialAttendees);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -68,7 +69,6 @@ export function MeetingsClient({ members, initialMeetings, initialAttendees }: M
   const [endTime, setEndTime] = useState('10:00');
   const [location, setLocation] = useState('');
   const [meetingType, setMeetingType] = useState('general');
-  const [createdBy, setCreatedBy] = useState('');
   const [selectedAttendees, setSelectedAttendees] = useState<string[]>([]);
 
   const router = useRouter();
@@ -98,7 +98,6 @@ export function MeetingsClient({ members, initialMeetings, initialAttendees }: M
     setEndTime('10:00');
     setLocation('');
     setMeetingType('general');
-    setCreatedBy('');
     setSelectedAttendees([]);
     setEditingMeeting(null);
   };
@@ -112,7 +111,6 @@ export function MeetingsClient({ members, initialMeetings, initialAttendees }: M
     setEndTime(meeting.end_time?.slice(0, 5) || '');
     setLocation(meeting.location || '');
     setMeetingType(meeting.meeting_type);
-    setCreatedBy(meeting.created_by || '');
     
     const meetingAttendees = attendees
       .filter(a => a.meeting_id === meeting.id)
@@ -135,7 +133,7 @@ export function MeetingsClient({ members, initialMeetings, initialAttendees }: M
         end_time: endTime || null,
         location: location || null,
         meeting_type: meetingType,
-        created_by: createdBy || null,
+        created_by: currentMember?.id || null,
       };
 
       let meetingId: string;
@@ -348,21 +346,17 @@ export function MeetingsClient({ members, initialMeetings, initialAttendees }: M
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label>Organized By</Label>
-                <Select value={createdBy} onValueChange={setCreatedBy}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select organizer" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {members.map((member) => (
-                      <SelectItem key={member.id} value={member.id}>
-                        {member.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              {currentMember && (
+                <div className="space-y-2">
+                  <Label>Organized By</Label>
+                  <div className="p-3 rounded-md bg-muted/50 border text-sm">
+                    {currentMember.name}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Automatically set to your profile
+                  </p>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label>Attendees</Label>
