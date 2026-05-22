@@ -63,15 +63,12 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
   const [contributions, setContributions] = useState<Contribution[]>(initialContributions);
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
   const [activeTab, setActiveTab] = useState('overview');
-  // Filter contributions by member - default to current user's member if logged in
-  const [selectedContributionMember, setSelectedContributionMember] = useState<string>(currentMemberId || 'all');
   
   // Contribution dialog state
   const [contributionDialogOpen, setContributionDialogOpen] = useState(false);
   const [editingContribution, setEditingContribution] = useState<Contribution | null>(null);
   const [contributionAmount, setContributionAmount] = useState('');
   const [contributionDate, setContributionDate] = useState('');
-  const [contributionMember, setContributionMember] = useState('');
   const [contributionDescription, setContributionDescription] = useState('');
   
   // Expense dialog state
@@ -88,24 +85,16 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
 
   const supabase = createClient();
 
-  // Filter contributions based on selected member
-  const filteredContributions = selectedContributionMember === 'all'
-    ? contributions
-    : contributions.filter(c => c.member_id === selectedContributionMember);
+  // Filter contributions to show only current user's contributions
+  const myContributions = currentMemberId 
+    ? contributions.filter(c => c.member_id === currentMemberId)
+    : [];
 
-  // Calculate totals - use filtered contributions for personal view
+  // Calculate totals - use only current user's contributions
   const totals = useMemo(() => {
-    const totalContributions = filteredContributions.reduce((sum, c) => sum + Number(c.amount), 0);
+    const totalContributions = myContributions.reduce((sum, c) => sum + Number(c.amount), 0);
     const totalExpenses = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
     const balance = totalContributions - totalExpenses;
-    
-    // Calculate contributions by member
-    const memberContributions = members.map(member => {
-      const memberTotal = contributions
-        .filter(c => c.member_id === member.id)
-        .reduce((sum, c) => sum + Number(c.amount), 0);
-      return { member, total: memberTotal };
-    }).sort((a, b) => b.total - a.total);
 
     // Calculate expenses by category
     const categoryExpenses = EXPENSE_CATEGORIES.map(cat => {
@@ -115,14 +104,13 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
       return { category: cat.label, total: catTotal };
     }).filter(c => c.total > 0);
 
-    return { totalContributions, totalExpenses, balance, memberContributions, categoryExpenses };
-  }, [filteredContributions, expenses, members]);
+    return { totalContributions, totalExpenses, balance, categoryExpenses };
+  }, [myContributions, expenses]);
 
   // Contribution handlers
   const resetContributionForm = () => {
     setContributionAmount('');
     setContributionDate('');
-    setContributionMember('');
     setContributionDescription('');
     setEditingContribution(null);
   };
@@ -131,7 +119,6 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
     setEditingContribution(contribution);
     setContributionAmount(contribution.amount.toString());
     setContributionDate(contribution.contribution_date);
-    setContributionMember(contribution.member_id || '');
     setContributionDescription(contribution.description || '');
     setContributionDialogOpen(true);
   };
@@ -144,7 +131,7 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
       const data = {
         amount: parseFloat(contributionAmount),
         contribution_date: contributionDate,
-        member_id: contributionMember || null,
+        member_id: currentMemberId || null,
         description: contributionDescription || null,
       };
 
@@ -320,21 +307,17 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Contributed By</Label>
-                  <Select value={contributionMember} onValueChange={setContributionMember}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select member" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {members.map((member) => (
-                        <SelectItem key={member.id} value={member.id}>
-                          {member.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {currentMemberId && (
+                  <div className="space-y-2">
+                    <Label>Contributed By</Label>
+                    <div className="p-3 rounded-md bg-muted/50 border text-sm">
+                      {getMemberName(currentMemberId)}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Automatically set to your profile
+                    </p>
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label>Description</Label>
@@ -464,10 +447,10 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
       </div>
 
       {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-4 mb-8">
+      <div className="grid gap-4 md:grid-cols-3 mb-8">
         <Card className="bg-white/70 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Contributions</CardTitle>
+            <CardTitle className="text-sm font-medium">My Contributions</CardTitle>
             <TrendingUp className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
@@ -475,7 +458,7 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
               {formatCurrency(totals.totalContributions)}
             </div>
             <p className="text-xs text-muted-foreground">
-              {contributions.length} contribution{contributions.length !== 1 ? 's' : ''}
+              {myContributions.length} contribution{myContributions.length !== 1 ? 's' : ''}
             </p>
           </CardContent>
         </Card>
@@ -497,7 +480,7 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
 
         <Card className="bg-white/70 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Current Balance</CardTitle>
+            <CardTitle className="text-sm font-medium">My Balance</CardTitle>
             <Wallet className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
@@ -505,24 +488,7 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
               {formatCurrency(totals.balance)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Available funds
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white/70 backdrop-blur-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Top Contributor</CardTitle>
-            <PiggyBank className="h-4 w-4 text-primary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-lg font-bold truncate">
-              {totals.memberContributions[0]?.member.name || 'N/A'}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {totals.memberContributions[0]?.total 
-                ? formatCurrency(totals.memberContributions[0].total)
-                : 'No contributions yet'}
+              Contribution minus expenses
             </p>
           </CardContent>
         </Card>
@@ -538,31 +504,29 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
 
         <TabsContent value="overview">
           <div className="grid gap-6 md:grid-cols-2">
-            {/* Contributions by Member */}
+            {/* My Contributions Summary */}
             <Card className="bg-white/70 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-lg">Contributions by Member</CardTitle>
+                <CardTitle className="text-lg">My Contributions Summary</CardTitle>
               </CardHeader>
               <CardContent>
-                {totals.memberContributions.filter(mc => mc.total > 0).length > 0 ? (
+                {myContributions.length > 0 ? (
                   <div className="space-y-4">
-                    {totals.memberContributions
-                      .filter(mc => mc.total > 0)
-                      .map((mc) => (
-                        <div key={mc.member.id} className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                              <span className="text-sm font-medium text-primary">
-                                {mc.member.name.charAt(0)}
-                              </span>
-                            </div>
-                            <span className="font-medium">{mc.member.name}</span>
-                          </div>
-                          <span className="font-semibold text-green-600">
-                            {formatCurrency(mc.total)}
-                          </span>
-                        </div>
-                      ))}
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">Total Contributed</span>
+                      <span className="font-semibold text-green-600">
+                        {formatCurrency(totals.totalContributions)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Number of Contributions</span>
+                      <span className="text-muted-foreground">{myContributions.length}</span>
+                    </div>
+                    {myContributions.length > 0 && (
+                      <div className="text-sm text-muted-foreground border-t pt-4 mt-4">
+                        <p>Latest: {formatCurrency(Number(myContributions[0]?.amount))} on {format(parseISO(myContributions[0]?.contribution_date), 'MMM d, yyyy')}</p>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <p className="text-center text-muted-foreground py-4">
@@ -602,9 +566,9 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
         <TabsContent value="contributions">
           <Card className="bg-white/70 backdrop-blur-sm">
             <CardContent className="p-0">
-              {contributions.length > 0 ? (
+              {myContributions.length > 0 ? (
                 <div className="divide-y">
-                  {contributions.map((contribution) => (
+                  {myContributions.map((contribution) => (
                     <div
                       key={contribution.id}
                       className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
@@ -618,7 +582,7 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
                             +{formatCurrency(Number(contribution.amount))}
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            {getMemberName(contribution.member_id)} • {format(parseISO(contribution.contribution_date), 'MMM d, yyyy')}
+                            {format(parseISO(contribution.contribution_date), 'MMM d, yyyy')}
                           </div>
                           {contribution.description && (
                             <div className="text-xs text-muted-foreground mt-1">

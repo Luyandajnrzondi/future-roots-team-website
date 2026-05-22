@@ -27,11 +27,12 @@ import { useToast } from '@/hooks/use-toast';
 interface FileUploadFormProps {
   teamMembers: TeamMember[];
   onUploadComplete: () => void;
+  currentMember: { id: string; name: string } | null;
 }
 
 type UploadType = 'file' | 'link' | 'video' | 'image';
 
-export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadFormProps) {
+export function FileUploadForm({ teamMembers, onUploadComplete, currentMember }: FileUploadFormProps) {
   const [open, setOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadType, setUploadType] = useState<UploadType>('file');
@@ -39,7 +40,6 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
   const [description, setDescription] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
   const [category, setCategory] = useState('general');
-  const [uploadedBy, setUploadedBy] = useState('');
   const [file, setFile] = useState<File | null>(null);
 
   const supabase = createClient();
@@ -61,7 +61,6 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
     setLinkUrl('');
     setFile(null);
     setCategory('general');
-    setUploadedBy('');
     setUploadType('file');
   };
 
@@ -121,7 +120,7 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
         file_type: fileType,
         file_size: fileSize,
         link_url: finalLinkUrl,
-        uploaded_by: uploadedBy || null,
+        uploaded_by: currentMember?.id || null,
         category: finalCategory,
       });
 
@@ -293,21 +292,17 @@ export function FileUploadForm({ teamMembers, onUploadComplete }: FileUploadForm
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="uploadedBy">Uploaded By</Label>
-            <Select value={uploadedBy} onValueChange={setUploadedBy}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select team member" />
-              </SelectTrigger>
-              <SelectContent>
-                {teamMembers.map((member) => (
-                  <SelectItem key={member.id} value={member.id}>
-                    {member.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {currentMember && (
+            <div className="space-y-2">
+              <Label>Uploaded By</Label>
+              <div className="p-3 rounded-md bg-muted/50 border text-sm">
+                {currentMember.name}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Automatically set to your profile
+              </p>
+            </div>
+          )}
 
           <Button type="submit" className="w-full" disabled={isUploading}>
             {isUploading ? (

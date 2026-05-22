@@ -4,6 +4,19 @@ import { MeetingsClient } from './meetings-client';
 export default async function MeetingsPage() {
   const supabase = await createClient();
   
+  // Get current user and their linked member
+  const { data: { user } } = await supabase.auth.getUser();
+  let currentMember: { id: string; name: string } | null = null;
+  
+  if (user) {
+    const { data: memberData } = await supabase
+      .from('team_members')
+      .select('id, name')
+      .eq('user_id', user.id)
+      .single();
+    currentMember = memberData || null;
+  }
+  
   const { data: members } = await supabase
     .from('team_members')
     .select('*')
@@ -24,6 +37,7 @@ export default async function MeetingsPage() {
       members={members || []} 
       initialMeetings={meetings || []}
       initialAttendees={attendees || []}
+      currentMember={currentMember}
     />
   );
 }
