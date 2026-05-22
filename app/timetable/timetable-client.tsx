@@ -36,6 +36,7 @@ import { Header } from '@/components/header';
 interface TimetableClientProps {
   members: TeamMember[];
   initialEntries: TimetableEntry[];
+  currentMemberId: string | null;
 }
 
 const DAYS_OF_WEEK = [
@@ -61,9 +62,10 @@ function formatTime(time: string) {
   return `${displayHour}:${minutes} ${ampm}`;
 }
 
-export function TimetableClient({ members, initialEntries }: TimetableClientProps) {
+export function TimetableClient({ members, initialEntries, currentMemberId }: TimetableClientProps) {
   const [entries, setEntries] = useState<TimetableEntry[]>(initialEntries);
-  const [selectedMember, setSelectedMember] = useState<string>('all');
+  // Default to current user's member if logged in, otherwise 'all'
+  const [selectedMember, setSelectedMember] = useState<string>(currentMemberId || 'all');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<TimetableEntry | null>(null);
   const [isLoading, setIsLoading] = useState(false);
