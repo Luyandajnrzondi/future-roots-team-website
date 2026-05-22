@@ -17,7 +17,8 @@ import {
   Home,
   Settings,
   X,
-  LogOut
+  LogOut,
+  User
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -146,6 +147,12 @@ export function Header() {
                 <DropdownMenuLabel className="text-xs text-muted-foreground">Settings</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
+                  <Link href="/profile" className="flex items-center gap-2 cursor-pointer rounded-lg">
+                    <User className="h-4 w-4" />
+                    My Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link href="/" className="flex items-center gap-2 cursor-pointer rounded-lg">
                     <Home className="h-4 w-4" />
                     Public Home Page
@@ -200,6 +207,12 @@ export function Header() {
               <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2">
                 <DropdownMenuLabel className="text-xs text-muted-foreground">Settings</DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="flex items-center gap-2 cursor-pointer rounded-lg">
+                    <User className="h-4 w-4" />
+                    My Profile
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/" className="flex items-center gap-2 cursor-pointer rounded-lg">
                     <Home className="h-4 w-4" />
@@ -329,6 +342,14 @@ export function Header() {
           {/* Settings */}
           <div className="p-4 pt-0 border-t border-border/30 mt-2">
             <p className="text-xs text-muted-foreground px-4 py-2">Settings</p>
+            <Link
+              href="/profile"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all duration-300 text-foreground hover:bg-foreground/5"
+            >
+              <User className="h-5 w-5" />
+              My Profile
+            </Link>
             <div className="px-4 py-3">
               <LogoUpload currentLogoUrl={logoUrl} onLogoChange={handleLogoChange} />
             </div>
