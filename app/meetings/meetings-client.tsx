@@ -30,7 +30,8 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
-import { Plus, Calendar, Clock, MapPin, Users, Pencil, Trash2, Loader2, Check, X } from 'lucide-react';
+import { Plus, Calendar, Clock, MapPin, Users, Pencil, Trash2, Loader2 } from 'lucide-react';
+import { MeetingMinutes } from '@/components/meeting-minutes';
 import { createClient } from '@/lib/supabase/client';
 import { format, isPast, isToday, isFuture, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -460,6 +461,11 @@ export function MeetingsClient({ members, initialMeetings, initialAttendees, cur
                   )}
 
                   <div className="flex items-center gap-2 pt-2">
+                    <MeetingMinutes 
+                      meeting={meeting} 
+                      members={members} 
+                      attendees={attendees} 
+                    />
                     <Button
                       size="sm"
                       variant="outline"
