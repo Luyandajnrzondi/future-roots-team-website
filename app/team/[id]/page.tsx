@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { format, parseISO, isPast, isToday } from 'date-fns';
 
@@ -164,6 +164,9 @@ export default async function MemberDetailPage({ params }: PageProps) {
         <div className="relative overflow-hidden rounded-3xl bg-foreground p-8 md:p-12 mb-8">
           <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6">
             <Avatar className="h-24 w-24 md:h-32 md:w-32 ring-4 ring-background/20">
+              {member.avatar_url && (
+                <AvatarImage src={member.avatar_url} alt={member.name} />
+              )}
               <AvatarFallback className="bg-background text-foreground text-2xl md:text-3xl font-medium">
                 {initials}
               </AvatarFallback>
@@ -404,11 +407,14 @@ export default async function MemberDetailPage({ params }: PageProps) {
                           href={`/team/${teammate.id}`}
                           className="flex items-center gap-3 p-3 rounded-xl hover:bg-secondary/50 transition-colors"
                         >
-                          <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-muted text-muted-foreground text-sm">
-                              {teammateInitials}
-                            </AvatarFallback>
-                          </Avatar>
+<Avatar className="h-10 w-10">
+                                            {teammate.avatar_url && (
+                                              <AvatarImage src={teammate.avatar_url} alt={teammate.name} />
+                                            )}
+                                            <AvatarFallback className="bg-muted text-muted-foreground text-sm">
+                                              {teammateInitials}
+                                            </AvatarFallback>
+                                          </Avatar>
                           <div className="min-w-0 flex-1">
                             <p className="font-medium text-foreground text-sm truncate">{teammate.name}</p>
                             <p className="text-xs text-muted-foreground truncate">{teammate.position}</p>
