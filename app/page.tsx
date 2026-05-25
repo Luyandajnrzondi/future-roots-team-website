@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { TeamMember, Announcement } from '@/lib/types';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, LayoutDashboard, Users, Smartphone, Sun, Tv, Mail, Phone, MapPin, Monitor, Briefcase } from 'lucide-react';
+import { ArrowRight, LayoutDashboard, Smartphone, Sun, Tv, Mail, Phone, MapPin, Monitor, Briefcase } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { LandingNavbar } from '@/components/landing-navbar';
 import { HeroSlider } from '@/components/hero-slider';
@@ -48,8 +48,6 @@ async function getLandingData() {
 
 export default async function HomePage() {
   const { members, announcements, logoUrl, heroSlides } = await getLandingData();
-  const displayedMembers = members.slice(0, 6);
-  const hasMoreMembers = members.length > 6;
 
   return (
     <div className="min-h-screen bg-background">
@@ -243,29 +241,21 @@ export default async function HomePage() {
         {/* Team Section */}
         <section id="team" className="py-32 border-t border-border">
           <div className="container mx-auto px-6">
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
-              <div>
-                <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4">
-                  Our Team
-                </p>
-                <h2 className="text-4xl md:text-5xl font-light text-foreground tracking-tight">
-                  Meet the People Behind
-                  <span className="block italic font-serif">Future Roots</span>
-                </h2>
-              </div>
-              {hasMoreMembers && (
-                <Link href="/dashboard">
-                  <button className="group inline-flex items-center gap-3 px-6 py-3 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/90 hover:gap-4">
-                    <Users className="h-4 w-4" />
-                    View All {members.length} Members
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </button>
-                </Link>
-              )}
+            <div className="mb-16">
+              <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground mb-4">
+                Our Team
+              </p>
+              <h2 className="text-4xl md:text-5xl font-light text-foreground tracking-tight">
+                Meet the People Behind
+                <span className="block italic font-serif">Future Roots</span>
+              </h2>
+              <p className="text-lg text-muted-foreground mt-6 max-w-2xl">
+                Our dedicated team of {members.length} members working together to create meaningful impact.
+              </p>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-              {displayedMembers.map((member) => (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+              {members.map((member) => (
                 <div 
                   key={member.id} 
                   className="group text-center"
@@ -288,21 +278,12 @@ export default async function HomePage() {
                   </div>
                   <p className="font-medium text-foreground text-sm">{member.name}</p>
                   <p className="text-xs text-muted-foreground mt-1">{member.position}</p>
+                  {member.department && (
+                    <p className="text-xs text-muted-foreground/70 mt-0.5">{member.department}</p>
+                  )}
                 </div>
               ))}
             </div>
-
-            {hasMoreMembers && (
-              <div className="text-center mt-12 md:hidden">
-                <Link href="/dashboard">
-                  <button className="group inline-flex items-center gap-3 px-6 py-3 bg-foreground/80 backdrop-blur-sm text-background rounded-full text-sm font-medium transition-all duration-300 hover:bg-foreground/90">
-                    <Users className="h-4 w-4" />
-                    View All {members.length} Members
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </Link>
-              </div>
-            )}
           </div>
         </section>
 
