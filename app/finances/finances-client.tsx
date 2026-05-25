@@ -28,7 +28,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
-import { Plus, TrendingUp, TrendingDown, Wallet, PiggyBank, Pencil, Trash2, Loader2, Receipt, DollarSign } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, Wallet, PiggyBank, Pencil, Trash2, Loader2, Receipt, DollarSign, Users } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { format, parseISO } from 'date-fns';
 import { Header } from '@/components/header';
@@ -90,11 +90,13 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
     ? contributions.filter(c => c.member_id === currentMemberId)
     : [];
 
-  // Calculate totals - use only current user's contributions
+  // Calculate totals - both personal and team
   const totals = useMemo(() => {
-    const totalContributions = myContributions.reduce((sum, c) => sum + Number(c.amount), 0);
+    const myTotalContributions = myContributions.reduce((sum, c) => sum + Number(c.amount), 0);
+    const teamTotalContributions = contributions.reduce((sum, c) => sum + Number(c.amount), 0);
     const totalExpenses = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
-    const balance = totalContributions - totalExpenses;
+    const myBalance = myTotalContributions - totalExpenses;
+    const teamBalance = teamTotalContributions - totalExpenses;
 
     // Calculate expenses by category
     const categoryExpenses = EXPENSE_CATEGORIES.map(cat => {
@@ -104,8 +106,29 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
       return { category: cat.label, total: catTotal };
     }).filter(c => c.total > 0);
 
-    return { totalContributions, totalExpenses, balance, categoryExpenses };
-  }, [myContributions, expenses]);
+    // Calculate contributions by member for team view
+    const memberContributions = members.map(member => {
+      const memberTotal = contributions
+        .filter(c => c.member_id === member.id)
+        .reduce((sum, c) => sum + Number(c.amount), 0);
+      return { 
+        memberId: member.id, 
+        memberName: member.name, 
+        total: memberTotal,
+        count: contributions.filter(c => c.member_id === member.id).length
+      };
+    }).filter(m => m.total > 0).sort((a, b) => b.total - a.total);
+
+    return { 
+      myTotalContributions, 
+      teamTotalContributions, 
+      totalExpenses, 
+      myBalance, 
+      teamBalance, 
+      categoryExpenses,
+      memberContributions 
+    };
+  }, [myContributions, contributions, expenses, members]);
 
   // Contribution handlers
   const resetContributionForm = () => {
@@ -447,7 +470,7 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
       </div>
 
       {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-3 mb-8">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
         <Card className="bg-white/70 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">My Contributions</CardTitle>
@@ -455,10 +478,25 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {formatCurrency(totals.totalContributions)}
+              {formatCurrency(totals.myTotalContributions)}
             </div>
             <p className="text-xs text-muted-foreground">
               {myContributions.length} contribution{myContributions.length !== 1 ? 's' : ''}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white/70 backdrop-blur-sm border-blue-200">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Team Contributions</CardTitle>
+            <Users className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              {formatCurrency(totals.teamTotalContributions)}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {contributions.length} total contribution{contributions.length !== 1 ? 's' : ''}
             </p>
           </CardContent>
         </Card>
@@ -480,15 +518,15 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
 
         <Card className="bg-white/70 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">My Balance</CardTitle>
+            <CardTitle className="text-sm font-medium">Team Balance</CardTitle>
             <Wallet className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${totals.balance >= 0 ? 'text-primary' : 'text-red-600'}`}>
-              {formatCurrency(totals.balance)}
+            <div className={`text-2xl font-bold ${totals.teamBalance >= 0 ? 'text-primary' : 'text-red-600'}`}>
+              {formatCurrency(totals.teamBalance)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Contribution minus expenses
+              Team contributions minus expenses
             </p>
           </CardContent>
         </Card>
@@ -504,6 +542,45 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
 
         <TabsContent value="overview">
           <div className="grid gap-6 md:grid-cols-2">
+            {/* Team Contributions by Member */}
+            <Card className="bg-white/70 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Users className="h-5 w-5 text-blue-600" />
+                  Team Contributions
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {totals.memberContributions.length > 0 ? (
+                  <div className="space-y-4">
+                    {totals.memberContributions.map((mc) => (
+                      <div key={mc.memberId} className="flex items-center justify-between">
+                        <div>
+                          <span className="font-medium">{mc.memberName}</span>
+                          <span className="text-xs text-muted-foreground ml-2">
+                            ({mc.count} contribution{mc.count !== 1 ? 's' : ''})
+                          </span>
+                        </div>
+                        <span className="font-semibold text-green-600">
+                          {formatCurrency(mc.total)}
+                        </span>
+                      </div>
+                    ))}
+                    <div className="border-t pt-4 mt-4 flex items-center justify-between">
+                      <span className="font-bold">Total</span>
+                      <span className="font-bold text-blue-600">
+                        {formatCurrency(totals.teamTotalContributions)}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-center text-muted-foreground py-4">
+                    No contributions recorded yet
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
             {/* My Contributions Summary */}
             <Card className="bg-white/70 backdrop-blur-sm">
               <CardHeader>
@@ -515,7 +592,7 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
                     <div className="flex items-center justify-between">
                       <span className="font-medium">Total Contributed</span>
                       <span className="font-semibold text-green-600">
-                        {formatCurrency(totals.totalContributions)}
+                        {formatCurrency(totals.myTotalContributions)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -537,15 +614,15 @@ export function FinancesClient({ members, initialContributions, initialExpenses,
             </Card>
 
             {/* Expenses by Category */}
-            <Card className="bg-white/70 backdrop-blur-sm">
+            <Card className="bg-white/70 backdrop-blur-sm md:col-span-2">
               <CardHeader>
                 <CardTitle className="text-lg">Expenses by Category</CardTitle>
               </CardHeader>
               <CardContent>
                 {totals.categoryExpenses.length > 0 ? (
-                  <div className="space-y-4">
+                  <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
                     {totals.categoryExpenses.map((ce) => (
-                      <div key={ce.category} className="flex items-center justify-between">
+                      <div key={ce.category} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                         <span className="font-medium">{ce.category}</span>
                         <span className="font-semibold text-red-600">
                           {formatCurrency(ce.total)}
