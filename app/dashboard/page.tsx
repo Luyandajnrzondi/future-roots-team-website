@@ -5,6 +5,7 @@ import { Users, Calendar, Upload as UploadIcon, Bell, ArrowRight } from 'lucide-
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
+import { ScheduleImages } from '@/components/schedule-images';
 
 export const dynamic = 'force-dynamic';
 
@@ -155,7 +156,7 @@ export default async function DashboardPage() {
         </section>
 
         {/* Recent Uploads */}
-        <section>
+        <section className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-medium text-foreground">Recent Uploads</h2>
             <Link href="/uploads" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -187,6 +188,17 @@ export default async function DashboardPage() {
               </Link>
             </div>
           )}
+        </section>
+
+        {/* Schedule Images Section */}
+        <section>
+          <div className="mb-6">
+            <h2 className="text-xl font-medium text-foreground">Program Schedule</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              View and manage the YDx Journey weekly schedule images
+            </p>
+          </div>
+          <ScheduleImages />
         </section>
       </main>
     </div>
