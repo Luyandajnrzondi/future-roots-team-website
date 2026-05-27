@@ -96,26 +96,27 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
   return (
     <>
       {/* Desktop Floating Navbar */}
-      <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-3rem)] max-w-5xl">
+      <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-3rem)] max-w-4xl">
         <nav 
           className={`
             flex items-center justify-between
-            px-4 sm:px-8 py-4
-            bg-white/90 backdrop-blur-xl
+            px-4 sm:px-6 py-2.5
             rounded-full
-            border border-gray-200/50
-            shadow-[0_8px_32px_rgba(0,0,0,0.08)]
-            transition-all duration-500
-            ${scrolled ? 'bg-white shadow-[0_8px_32px_rgba(0,0,0,0.12)]' : ''}
+            border
+            transition-all duration-500 ease-out
+            ${scrolled 
+              ? 'bg-white/40 backdrop-blur-md border-white/30 shadow-[0_4px_24px_rgba(0,0,0,0.06)]' 
+              : 'bg-white/20 backdrop-blur-sm border-white/20 shadow-[0_2px_16px_rgba(0,0,0,0.04)]'
+            }
           `}
         >
           {/* Left - Navigation Links */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-300"
+                className="text-sm font-medium text-gray-600/90 hover:text-gray-900 transition-all duration-300 hover:scale-[1.02]"
               >
                 {link.name}
               </Link>
@@ -140,26 +141,26 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
               <Image
                 src={logoUrl}
                 alt="Future Roots Logo"
-                width={36}
-                height={36}
-                className="h-9 w-9 rounded-full object-contain"
+                width={32}
+                height={32}
+                className="h-8 w-8 rounded-full object-contain"
               />
             ) : (
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-foreground">
-                <span className="text-sm font-medium text-background">FR</span>
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground">
+                <span className="text-xs font-medium text-background">FR</span>
               </div>
             )}
-            <span className="text-base font-semibold text-gray-900 hidden sm:block">
+            <span className="text-sm font-semibold text-gray-800 hidden sm:block">
               Future Roots
             </span>
           </Link>
 
           {/* Right - Actions */}
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
             {!isLoading && (
               user ? (
                 <Link href="/dashboard">
-                  <button className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-olive text-olive-foreground rounded-full text-sm font-medium transition-all duration-300 hover:bg-olive/90 hover:shadow-lg hover:shadow-olive/25">
+                  <button className="inline-flex items-center gap-2 px-4 py-2 bg-[#4f5b3a] text-white rounded-full text-sm font-medium transition-all duration-300 hover:bg-[#5a6844] hover:shadow-lg hover:shadow-[#4f5b3a]/20 hover:scale-[1.02]">
                     <LayoutDashboard className="h-4 w-4" />
                     <span className="hidden sm:inline">Dashboard</span>
                   </button>
@@ -168,13 +169,13 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
                 <>
                   <button 
                     onClick={openSignIn}
-                    className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-300 hidden sm:block"
+                    className="text-sm font-medium text-gray-600/90 hover:text-gray-900 transition-all duration-300 hidden sm:block"
                   >
                     Sign in
                   </button>
                   <button 
                     onClick={openSignUp}
-                    className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-olive text-olive-foreground rounded-full text-sm font-medium transition-all duration-300 hover:bg-olive/90 hover:shadow-lg hover:shadow-olive/25"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#4f5b3a] text-white rounded-full text-sm font-medium transition-all duration-300 hover:bg-[#5a6844] hover:shadow-lg hover:shadow-[#4f5b3a]/20 hover:scale-[1.02]"
                   >
                     <UserPlus className="h-4 w-4" />
                     <span className="hidden sm:inline">Get Started</span>
@@ -267,7 +268,7 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
             {!isLoading && (
               user ? (
                 <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                  <button className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-olive text-olive-foreground rounded-full text-base font-medium transition-all duration-300 hover:bg-olive/90 hover:shadow-lg hover:shadow-olive/25">
+                  <button className="w-full inline-flex items-center justify-center gap-3 px-6 py-3.5 bg-[#4f5b3a] text-white rounded-full text-base font-medium transition-all duration-300 hover:bg-[#5a6844] hover:shadow-lg hover:shadow-[#4f5b3a]/20">
                     <LayoutDashboard className="h-5 w-5" />
                     Go to Dashboard
                   </button>
@@ -276,7 +277,7 @@ export function LandingNavbar({ logoUrl }: LandingNavbarProps) {
                 <>
                   <button 
                     onClick={openSignUp}
-                    className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-olive text-olive-foreground rounded-full text-base font-medium transition-all duration-300 hover:bg-olive/90 hover:shadow-lg hover:shadow-olive/25"
+                    className="w-full inline-flex items-center justify-center gap-3 px-6 py-3.5 bg-[#4f5b3a] text-white rounded-full text-base font-medium transition-all duration-300 hover:bg-[#5a6844] hover:shadow-lg hover:shadow-[#4f5b3a]/20"
                   >
                     <UserPlus className="h-5 w-5" />
                     Get Started
